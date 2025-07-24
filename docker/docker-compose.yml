@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  drupal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    volumes:
+      - ./drupal:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - DB_HOST=db
+      - DB_NAME=drupaldb
+      - DB_USER=drupal
+      - DB_PASSWORD=drupalpass
+
+  db:
+    image: mariadb:10.5
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: drupaldb
+      MYSQL_USER: drupal
+      MYSQL_PASSWORD: drupalpass
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
