@@ -1,0 +1,8 @@
+aws_region  = "us-east-1"
+aws_profile = "default"
+project     = "drupal-infra"
+key_name    = "drupalkey"
+instance_type = "t3.micro"
+ami_id       = "ami-020cba7c55df1f615"
+db_username = "drupal"
+db_password = "MyStr0ngP@ssword-123"
