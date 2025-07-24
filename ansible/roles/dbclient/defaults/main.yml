@@ -1,0 +1,5 @@
+---
+db_host: "{{ lookup('env', 'DB_HOST') | default('my-drupal-db.abcdefghijkl.us-east-1.rds.amazonaws.com', true) }}"
+db_name: drupal
+db_user: drupal_user
+db_password: "{{ lookup('env', 'DB_PASSWORD') | default('securepassword123', true) }}"

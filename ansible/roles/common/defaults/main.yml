@@ -1,0 +1,12 @@
+---
+common_packages:
+  - git
+  - curl
+  - wget
+  - unzip
+  - htop
+  - ufw
+  - fail2ban
+
+timezone: "UTC"
+create_user: "deployer"

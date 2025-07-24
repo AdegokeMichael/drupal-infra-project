@@ -1,0 +1,51 @@
+---
+- name: Install Apache
+  apt:
+    name: apache2
+    state: present
+
+- name: Enable Apache mods
+  apache2_module:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - rewrite
+    - headers
+
+- name: Install PHP and extensions
+  apt:
+    name: "{{ php_packages }}"
+    state: present
+
+- name: Copy custom php.ini
+  copy:
+    src: php.ini
+    dest: /etc/php/{{ ansible_facts.packages['php'][0]['version'] | regex_replace('^([0-9]+\.[0-9]+).*', '\\1') }}/apache2/php.ini
+  notify: Restart Apache
+
+- name: Create Drupal root directory
+  file:
+    path: "{{ drupal_root }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+    recurse: yes
+
+- name: Configure Apache virtual host for Drupal
+  template:
+    src: drupal.conf.j2
+    dest: /etc/apache2/sites-available/drupal.conf
+
+- name: Enable Drupal virtual host
+  command: a2ensite drupal.conf
+  notify: Restart Apache
+
+- name: Disable default Apache site
+  command: a2dissite 000-default.conf
+  notify: Restart Apache
+
+
+- import_tasks: apache.yml
+- import_tasks: php.yml
+- import_tasks: drupal_install.yml

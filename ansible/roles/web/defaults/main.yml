@@ -1,0 +1,13 @@
+---
+drupal_root: /var/www/html/drupal
+php_packages:
+  - php
+  - php-cli
+  - php-common
+  - php-mysql
+  - php-xml
+  - php-gd
+  - php-curl
+  - php-mbstring
+  - php-zip
+  - php-json

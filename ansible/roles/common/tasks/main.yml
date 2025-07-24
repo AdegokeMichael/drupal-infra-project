@@ -1,0 +1,34 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Upgrade all packages
+  apt:
+    upgrade: dist
+  notify: Reboot if required
+
+- name: Set timezone
+  timezone:
+    name: "{{ timezone }}"
+
+- name: Install common packages
+  apt:
+    name: "{{ common_packages }}"
+    state: present
+
+- name: Ensure deploy user exists
+  user:
+    name: "{{ create_user }}"
+    shell: /bin/bash
+    groups: sudo
+    state: present
+    create_home: yes
+
+- name: Add authorized SSH key for deploy user
+  authorized_key:
+    user: "{{ create_user }}"
+    state: present
+    key: "{{ lookup('file', 'files/deployer.pub') }}"
+  when: create_user is defined

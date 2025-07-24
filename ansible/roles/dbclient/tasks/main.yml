@@ -1,0 +1,7 @@
+---
+- name: Configure Drupal settings.php with RDS DB connection
+  template:
+    src: drupal.settings.php.j2
+    dest: /var/www/html/sites/default/settings.php
+    mode: '0644'
+  notify: Restart Apache
