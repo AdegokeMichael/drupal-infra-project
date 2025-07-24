@@ -14,7 +14,7 @@ module "nat_gateway" {
   vpc_id             = module.vpc.vpc_id
   public_subnet_id   = module.vpc.public_subnets[0]
   private_subnet_ids = module.vpc.private_subnets
-  igw_id             = aws_internet_gateway.igw.id  # From root if you bring IGW out of the VPC module
+  igw_id             = module.vpc.igw_id  # From root if you bring IGW out of the VPC module
  
 }
 
