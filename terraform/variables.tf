@@ -22,6 +22,17 @@ variable "environment" {
   default     = "dev"
 }
 
+variable "db_username" {
+  description = "Master DB username"
+  type        = string
+}
+
+variable "db_password" {
+  description = "Master DB password"
+  type        = string
+  sensitive   = true
+}
+
 
 variable "instance_type" {
   description = "EC2 instance type"
