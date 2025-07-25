@@ -5,7 +5,7 @@ image:
   tag: "8.0"
   pullPolicy: IfNotPresent
 
-mysqlsecrets: {}
+mysqlSecrets: {}
 
 resources:
   limits:
