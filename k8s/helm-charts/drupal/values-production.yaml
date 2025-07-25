@@ -5,6 +5,8 @@ image:
   tag: "latest"
   pullPolicy: IfNotPresent
 
+drupalSecrets: {}  
+
 resources:
   limits:
     cpu: "750m"
