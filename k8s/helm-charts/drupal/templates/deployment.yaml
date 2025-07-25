@@ -13,19 +13,39 @@ spec:
         app: {{ include "drupal.name" . }}
     spec:
       containers:
-      - name: drupal
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        ports:
-        - containerPort: 80
-          name: http
-        livenessProbe: {{ toYaml .Values.livenessProbe | nindent 10 }}
-        readinessProbe: {{ toYaml .Values.readinessProbe | nindent 10 }}
-               volumeMounts:
-        - name: drupal-persistent-storage
-            mountPath: /var/www/html
+        - name: drupal
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: DRUPAL_ACCOUNT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "drupal.fullname" . }}-secret
+                  key: drupal-password
+            - name: DRUPAL_DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "drupal.fullname" . }}-secret
+                  key: db-password
+            - name: DRUPAL_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "drupal.fullname" . }}-secret
+                  key: db-user
+            - name: DRUPAL_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "drupal.fullname" . }}-secret
+                  key: db-name
+          ports:
+            - name: http
+              containerPort: 80
+          livenessProbe: {{ toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe: {{ toYaml .Values.readinessProbe | nindent 12 }}
+          volumeMounts:
+            - name: drupal-persistent-storage
+              mountPath: /var/www/html
       volumes:
         - name: drupal-persistent-storage
           persistentVolumeClaim:
             claimName: {{ include "drupal.fullname" . }}-pvc
- 
