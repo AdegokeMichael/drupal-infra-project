@@ -5,11 +5,7 @@ image:
   tag: "8.0"
   pullPolicy: IfNotPresent
 
-mysql:
-  rootPassword: "prod-root-password"
-  user: "drupaluser"
-  password: "prod-db-password"
-  database: "drupaldb"
+mysqlsecrets: {}
 
 resources:
   limits:
