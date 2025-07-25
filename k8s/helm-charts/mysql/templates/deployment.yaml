@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mysql.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "mysql.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "mysql.name" . }}
+    spec:
+      containers:
+      - name: mysql
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: {{ .Values.mysql.rootPassword | quote }}
+          - name: MYSQL_DATABASE
+            value: {{ .Values.mysql.database | quote }}
+          - name: MYSQL_USER
+            value: {{ .Values.mysql.user | quote }}
+          - name: MYSQL_PASSWORD
+            value: {{ .Values.mysql.password | quote }}
+        ports:
+        - containerPort: 3306
+          name: mysql
+        livenessProbe: {{ toYaml .Values.livenessProbe | nindent 10 }}
+        readinessProbe: {{ toYaml .Values.readinessProbe | nindent 10 }}
