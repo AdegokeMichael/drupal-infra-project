@@ -36,3 +36,9 @@ readinessProbe:
       - localhost
   initialDelaySeconds: 5
   timeoutSeconds: 3
+
+persistence:
+  enabled: true
+  size: 5Gi
+  storageClass: gp2  # Replace with "standard" or your cluster's default if needed
+  
