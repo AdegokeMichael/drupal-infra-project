@@ -30,3 +30,12 @@ spec:
           name: mysql
         livenessProbe: {{ toYaml .Values.livenessProbe | nindent 10 }}
         readinessProbe: {{ toYaml .Values.readinessProbe | nindent 10 }}
+
+        volumeMounts:
+          - name: mysql-persistent-storage
+            mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-persistent-storage
+          persistentVolumeClaim:
+            claimName: {{ include "mysql.fullname" . }}-pvc
+
