@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "drupal.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "drupal.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "drupal.name" . }}
+    spec:
+      containers:
+      - name: drupal
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 80
+          name: http
+        livenessProbe: {{ toYaml .Values.livenessProbe | nindent 10 }}
+        readinessProbe: {{ toYaml .Values.readinessProbe | nindent 10 }}
