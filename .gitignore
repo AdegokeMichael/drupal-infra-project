@@ -1,0 +1,10 @@
+.terraform/
+*.tfstate
+*.tfstate.backup
+terraform.tfvars
+.ansible-*
+__pycache__/
+*.retry
+docker/.env
+*.log
+terraform/.terraform.lock.hcl
