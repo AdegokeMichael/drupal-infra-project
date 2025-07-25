@@ -13,53 +13,39 @@ spec:
         app: {{ include "mysql.name" . }}
     spec:
       containers:
-      - name: mysql
-        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
-        
-        env:
-          - name: MYSQL_ROOT_PASSWORD
-             valueFrom:
-               secretKeyRef:
-                 name: {{ include "mysql.fullname" . }}-secret
-                 key: root-password
-          - name: MYSQL_USER
-             valueFrom:
-               secretKeyRef:
-                 name: {{ include "mysql.fullname" . }}-secret
-                 key: user
-          - name: MYSQL_PASSWORD
-             valueFrom:
-               secretKeyRef:
-                 name: {{ include "mysql.fullname" . }}-secret
-                 key: password
-          - name: MYSQL_DATABASE
-             valueFrom:
-               secretKeyRef:
-                 name: {{ include "mysql.fullname" . }}-secret
-                 key: database
-
-
-        env:
-          - name: MYSQL_ROOT_PASSWORD
-            value: {{ .Values.mysql.rootPassword | quote }}
-          - name: MYSQL_DATABASE
-            value: {{ .Values.mysql.database | quote }}
-          - name: MYSQL_USER
-            value: {{ .Values.mysql.user | quote }}
-          - name: MYSQL_PASSWORD
-            value: {{ .Values.mysql.password | quote }}
-        ports:
-        - containerPort: 3306
-          name: mysql
-        livenessProbe: {{ toYaml .Values.livenessProbe | nindent 10 }}
-        readinessProbe: {{ toYaml .Values.readinessProbe | nindent 10 }}
-
-        volumeMounts:
-          - name: mysql-persistent-storage
-            mountPath: /var/lib/mysql
+        - name: mysql
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mysql.fullname" . }}-secret
+                  key: root-password
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mysql.fullname" . }}-secret
+                  key: user
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mysql.fullname" . }}-secret
+                  key: password
+            - name: MYSQL_DATABASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "mysql.fullname" . }}-secret
+                  key: database
+          ports:
+            - containerPort: 3306
+              name: mysql
+          livenessProbe: {{ toYaml .Values.livenessProbe | nindent 12 }}
+          readinessProbe: {{ toYaml .Values.readinessProbe | nindent 12 }}
+          volumeMounts:
+            - name: mysql-persistent-storage
+              mountPath: /var/lib/mysql
       volumes:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
             claimName: {{ include "mysql.fullname" . }}-pvc
-
