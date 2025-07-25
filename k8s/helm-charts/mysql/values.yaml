@@ -1,0 +1,38 @@
+replicaCount: 1
+
+image:
+  repository: mysql
+  tag: 8.0
+  pullPolicy: IfNotPresent
+
+mysql:
+  rootPassword: your-root-password
+  database: drupal
+  user: drupaluser
+  password: drupalpass
+
+service:
+  type: ClusterIP
+  port: 3306
+
+resources: {}
+
+livenessProbe:
+  exec:
+    command:
+      - mysqladmin
+      - ping
+      - -h
+      - localhost
+  initialDelaySeconds: 30
+  timeoutSeconds: 5
+
+readinessProbe:
+  exec:
+    command:
+      - mysqladmin
+      - ping
+      - -h
+      - localhost
+  initialDelaySeconds: 5
+  timeoutSeconds: 3
