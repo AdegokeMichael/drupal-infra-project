@@ -1,0 +1,32 @@
+replicaCount: 1
+
+image:
+  repository: mysql
+  tag: "8.0"
+  pullPolicy: IfNotPresent
+
+mysql:
+  rootPassword: "prod-root-password"
+  user: "drupaluser"
+  password: "prod-db-password"
+  database: "drupaldb"
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "1024Mi"
+  requests:
+    cpu: "250m"
+    memory: "512Mi"
+
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  size: 10Gi
+  storageClass: "gp3"
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
