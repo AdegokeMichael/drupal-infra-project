@@ -21,3 +21,11 @@ spec:
           name: http
         livenessProbe: {{ toYaml .Values.livenessProbe | nindent 10 }}
         readinessProbe: {{ toYaml .Values.readinessProbe | nindent 10 }}
+               volumeMounts:
+        - name: drupal-persistent-storage
+            mountPath: /var/www/html
+      volumes:
+        - name: drupal-persistent-storage
+          persistentVolumeClaim:
+            claimName: {{ include "drupal.fullname" . }}-pvc
+ 
