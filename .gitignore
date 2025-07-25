@@ -8,3 +8,64 @@ __pycache__/
 docker/.env
 *.log
 terraform/.terraform.lock.hcl
+
+# === Terraform ===
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+*.tfplan
+crash.log
+override.tf
+override.tf.json
+.terraform.lock.hcl
+
+# === Ansible ===
+*.retry
+*.vault
+inventory.ini
+host_vars/
+group_vars/
+ansible.cfg
+
+# === Kubernetes ===
+k8s/*.yaml
+k8s/secrets/
+secret.yaml
+secrets.yaml
+drupal/secret.yaml
+drupal/templates/secret.yaml
+mysql/secret.yaml
+mysql/templates/secret.yaml
+
+# === Helm ===
+charts/
+tmpcharts/
+*.tgz
+values-production.yaml
+values-staging.yaml
+
+# === Docker ===
+*.log
+*.pid
+.docker/
+docker-compose.override.yml
+
+# === GitHub Actions (optional secrets) ===
+.github/workflows/secrets.yml
+.github/.env
+.env
+.env.*
+
+# === System Files ===
+.DS_Store
+Thumbs.db
+
+# === IDE Files ===
+.idea/
+.vscode/
+*.swp
+*.swo
+*.bak
+*.tmp
+
