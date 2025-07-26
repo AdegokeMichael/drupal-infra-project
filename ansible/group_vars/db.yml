@@ -1,5 +1,5 @@
 rds_endpoint: drupal-app-db.c3eewgrpysg2.us-east-1.rds.amazonaws.com
 drupal_db_name: "drupal"
 drupal_db_user: "drupaluser"
-drupal_db_pass: "{{ vault_drupal_db_pass }}"
+drupal_db_pass: "mysecurepassword123"
 drupal_db_host: "{{ rds_endpoint }}"  # passed from Terraform to Ansible inventory
