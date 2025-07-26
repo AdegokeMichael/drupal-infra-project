@@ -4,7 +4,7 @@
     src: "https://www.drupal.org/download-latest/tar.gz"
     dest: /var/www/
     remote_src: yes
-    #creates: /var/www/index.php  # Optional: skip extraction if already done
+    creates: /var/www/index.php  # Optional: skip extraction if already done
 
 - name: Find the Drupal directory
   ansible.builtin.find:
