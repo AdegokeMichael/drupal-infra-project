@@ -2,16 +2,17 @@ output "rds_endpoint" {
   value = module.rds.rds_endpoint
 }
 output "bastion_public_ip" {
-  value = aws_instance.bastion.public_ip
+  value = module.ec2.bastion_public_ip
 }
 
 output "app_private_ips" {
-  value = aws_instance.app[*].private_ip
+  value = module.ec2.app_private_ips
 }
 
 output "app_instance_ids" {
-  value = aws_instance.app[*].id
+  value = module.ec2.app_instance_ids
 }
+
 output "vpc_id" {
   value = module.vpc.vpc_id
 }
