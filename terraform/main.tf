@@ -24,6 +24,7 @@ module "security_groups" {
   project       = "drupal-app"
   vpc_id        = module.vpc.vpc_id
   bastion_cidr  = "102.89.22.112/32" # or subnet of bastion instance
+  my_ip_cidr     = var.my_ip_cidr
 }
 
 module "ec2" {
