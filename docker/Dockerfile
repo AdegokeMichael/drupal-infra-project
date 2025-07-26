@@ -15,9 +15,9 @@ RUN curl -sS https://getcomposer.org/installer | php \
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy entrypoint script if needed
+# Copy entrypoint script if needed (optional)
 COPY scripts/install-drupal.sh /usr/local/bin/install-drupal.sh
 RUN chmod +x /usr/local/bin/install-drupal.sh
 
-# Expose port
+# Expose Apache port
 EXPOSE 80
