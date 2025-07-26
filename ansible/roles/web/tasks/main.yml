@@ -49,23 +49,25 @@
     url: https://www.drupal.org/download-latest/tar.gz
     dest: /tmp/drupal.tar.gz
 
-- name: Extract Drupal
+- name: Extract Drupal directly into root folder
   unarchive:
     src: /tmp/drupal.tar.gz
     dest: "{{ drupal_root }}"
     remote_src: yes
+    extra_opts: [--strip-components=1]
     creates: "{{ drupal_root }}/index.php"
 
-- name: Get extracted Drupal directory name
-  find:
-    paths: /var/www/html/drupal
-    file_type: directory
-    patterns: 'drupal-*'
-  register: drupal_dir
 
-- name: Move Drupal files to root directory
-  command: mv {{ drupal_dir.files[0].path }}/* /var/www/html/drupal/
-  when: drupal_dir.matched > 0
+#- name: Get extracted Drupal directory name
+#  find:
+ #   paths: /var/www/html/drupal
+ #   file_type: directory
+ #   patterns: 'drupal-*'
+ # register: drupal_dir
+
+#- name: Move Drupal files to root directory
+ # command: mv {{ drupal_dir.files[0].path }}/* /var/www/html/drupal/
+ # when: drupal_dir.matched > 0
     
 
 #- name: Move Drupal files to root directory
