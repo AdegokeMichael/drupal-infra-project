@@ -8,23 +8,23 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./html/drupal:/var/www/html
+      - ./drupal:/var/www/html
     depends_on:
       - db
     environment:
-      - DB_HOST=db
-      - DB_NAME=drupaldb
-      - DB_USER=drupal
-      - DB_PASSWORD=drupalpass
+      - DB_HOST=${DB_HOST}
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
 
   db:
     image: mariadb:10.5
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: drupaldb
-      MYSQL_USER: drupal
-      MYSQL_PASSWORD: drupalpass
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
     volumes:
       - db_data:/var/lib/mysql
 
