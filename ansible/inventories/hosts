@@ -11,4 +11,13 @@ db ansible_host=drupal-app-db.c3eewgrpysg2.us-east-1.rds.amazonaws.com ansible_u
 [web:vars]
 ansible_ssh_common_args='-o ProxyCommand="ssh -W %h:%p -q ubuntu@52.3.223.35"'
 
+[app_servers]
+10.1.3.162
+10.1.4.46
+
+[app_servers:vars]
+ansible_user=ubuntu
+ansible_ssh_private_key_file=/home/ubuntu/drupalkey.pem
+
+
 
