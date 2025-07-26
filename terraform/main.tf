@@ -37,7 +37,7 @@ module "ec2" {
   private_subnet_ids  = module.vpc.private_subnets
   root_volume_size    = var.root_volume_size
   root_volume_type    = var.root_volume_type
-  bastion_sg_id       = module.security_groups.alb_sg_id
+  bastion_sg_id       = module.security_groups.bastion_sg_id
   app_sg_id           = module.security_groups.ec2_sg_id
 }
 
