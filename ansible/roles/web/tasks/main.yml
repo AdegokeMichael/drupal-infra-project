@@ -46,6 +46,6 @@
   notify: Restart Apache
 
 
-- import_tasks: apache.yml
-- import_tasks: php.yml
-- import_tasks: drupal_install.yml
+#- import_tasks: apache.yml
+#- import_tasks: php.yml
+#- import_tasks: drupal_install.yml
