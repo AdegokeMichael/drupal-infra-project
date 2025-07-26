@@ -60,3 +60,8 @@ variable "root_volume_type" {
   type        = string
   default     = "gp3"
 }
+
+variable "my_ip_cidr" {
+  description = "Your public IP in CIDR format"
+  type        = string
+}
