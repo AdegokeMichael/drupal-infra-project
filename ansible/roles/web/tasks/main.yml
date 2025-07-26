@@ -1,22 +1,25 @@
 ---
+
 - name: Add Ondrej PHP PPA
   apt_repository:
     repo: ppa:ondrej/php
     state: present
-    update_cache: yes
+  become: true
+  update_cache: yes
 
 - name: Install Apache
   apt:
     name: apache2
     state: present
 
-- name: Enable required Apache modules
+- name: Enable Apache mods
   apache2_module:
     name: "{{ item }}"
     state: present
   loop:
     - rewrite
     - headers
+  notify: Restart Apache
 
 - name: Install PHP and required extensions
   apt:
@@ -29,9 +32,35 @@
     dest: "/etc/php/{{ php_version }}/apache2/php.ini"
   notify: Restart Apache
 
-- name: Create Drupal root directory
+- name: Ensure Drupal root directory exists
   file:
     path: "{{ drupal_root }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+    recurse: yes
+
+- name: Download latest Drupal archive
+  get_url:
+    url: https://www.drupal.org/download-latest/tar.gz
+    dest: /tmp/drupal.tar.gz
+
+- name: Extract Drupal
+  unarchive:
+    src: /tmp/drupal.tar.gz
+    dest: "{{ drupal_root }}"
+    remote_src: yes
+    creates: "{{ drupal_root }}/index.php"
+
+- name: Move Drupal files to root directory
+  command: mv {{ drupal_root }}/drupal-*/* {{ drupal_root }}/
+  args:
+    removes: "{{ drupal_root }}/drupal-*"
+
+- name: Ensure sites/default directory exists
+  file:
+    path: "{{ drupal_root }}/sites/default"
     state: directory
     owner: www-data
     group: www-data
@@ -46,12 +75,8 @@
 
 - name: Enable Drupal virtual host
   command: a2ensite drupal.conf
-  args:
-    creates: /etc/apache2/sites-enabled/drupal.conf
   notify: Restart Apache
 
 - name: Disable default Apache site
   command: a2dissite 000-default.conf
-  args:
-    removes: /etc/apache2/sites-enabled/000-default.conf
   notify: Restart Apache
