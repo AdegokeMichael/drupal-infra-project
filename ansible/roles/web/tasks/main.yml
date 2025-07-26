@@ -5,7 +5,10 @@
     repo: ppa:ondrej/php
     state: present
   become: true
-  update_cache: yes
+
+- name: Update apt cache after adding repo
+  apt:
+    update_cache: yes
 
 - name: Install Apache
   apt:
