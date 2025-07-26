@@ -1,6 +1,7 @@
 [web]
-app-server-1 ansible_host=3.XX.XX.XX ansible_user=ubuntu
-app-server-2 ansible_host=3.YY.YY.YY ansible_user=ubuntu
+app-server-1 ansible_host=10.1.3.10 ansible_user=ubuntu
+app-server-2 ansible_host=10.1.4.11 ansible_user=ubuntu
 
 [db]
 rds-placeholder ansible_host=my-db-endpoint.rds.amazonaws.com ansible_user=ubuntu
+
