@@ -1,0 +1,17 @@
+---
+- name: Sync Drupal settings file
+  ansible.builtin.template:
+    src: drupal.settings.php.j2
+    dest: /var/www/html/sites/default/settings.php
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Ensure files directory is writable
+  ansible.builtin.file:
+    path: /var/www/html/sites/default/files
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
