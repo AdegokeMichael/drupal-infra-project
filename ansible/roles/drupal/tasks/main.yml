@@ -5,10 +5,12 @@
     dest: /var/www/
     remote_src: yes
 
-- name: Set correct permissions
+- name: Set correct permissions on Drupal directory
   ansible.builtin.file:
     path: /var/www/drupal-*
     owner: www-data
     group: www-data
     recurse: yes
+    state: directory
+
 
