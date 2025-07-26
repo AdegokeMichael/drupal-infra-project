@@ -1,8 +1,19 @@
 ---
+- name: Ensure Drupal default directory exists
+  file:
+    path: /var/www/html/sites/default
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+
 - name: Configure Drupal settings.php with RDS DB connection
   template:
     src: drupal.settings.php.j2
     dest: /var/www/html/sites/default/settings.php
+    owner: www-data
+    group: www-data
     mode: '0644'
   notify: Restart Apache
 
