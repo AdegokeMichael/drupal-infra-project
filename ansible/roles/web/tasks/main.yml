@@ -56,10 +56,22 @@
     remote_src: yes
     creates: "{{ drupal_root }}/index.php"
 
+- name: Get extracted Drupal directory name
+  find:
+    paths: /var/www/html/drupal
+    file_type: directory
+    patterns: 'drupal-*'
+  register: drupal_dir
+
 - name: Move Drupal files to root directory
-  command: mv {{ drupal_root }}/drupal-*/* {{ drupal_root }}/
-  args:
-    removes: "{{ drupal_root }}/drupal-*"
+  command: mv {{ drupal_dir.files[0].path }}/* /var/www/html/drupal/
+  when: drupal_dir.matched > 0
+    
+
+#- name: Move Drupal files to root directory
+ # command: mv {{ drupal_root }}/drupal-*/* {{ drupal_root }}/
+  #args:
+   # removes: "{{ drupal_root }}/drupal-*"
 
 - name: Ensure sites/default directory exists
   file:
