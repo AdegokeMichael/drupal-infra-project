@@ -23,7 +23,7 @@ module "security_groups" {
   source        = "./modules/security_groups"
   project       = "drupal-app"
   vpc_id        = module.vpc.vpc_id
-  bastion_cidr  = " 102.89.22.112/32" # or subnet of bastion instance
+  bastion_cidr  = "102.89.22.112/32" # or subnet of bastion instance
 }
 
 module "ec2" {
