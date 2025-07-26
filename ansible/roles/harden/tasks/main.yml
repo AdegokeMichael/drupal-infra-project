@@ -1,0 +1,16 @@
+---
+- name: Ensure UFW is installed
+  apt:
+    name: ufw
+    state: present
+  become: true
+
+- name: Configure basic firewall rules
+  ufw:
+    rule: allow
+    name: 'OpenSSH'
+
+- name: Enable UFW
+  ufw:
+    state: enabled
+
