@@ -1,80 +1,57 @@
 ---
-- name: Configure Apache and PHP for Drupal
-  hosts: web
-  become: true
-  vars:
-    php_version: "8.1"
-    php_packages:
-      - php{{ php_version }}
-      - libapache2-mod-php{{ php_version }}
-      - php{{ php_version }}-mysql
-      - php{{ php_version }}-xml
-      - php{{ php_version }}-gd
-      - php{{ php_version }}-curl
-      - php{{ php_version }}-mbstring
-      - php{{ php_version }}-zip
-    drupal_root: /var/www/html/drupal
+- name: Add Ondrej PHP PPA
+  apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+    update_cache: yes
 
-  tasks:
-    - name: Add Ondrej PHP PPA
-      apt_repository:
-        repo: ppa:ondrej/php
-        state: present
-        update_cache: yes
+- name: Install Apache
+  apt:
+    name: apache2
+    state: present
 
-    - name: Install Apache
-      apt:
-        name: apache2
-        state: present
+- name: Enable required Apache modules
+  apache2_module:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - rewrite
+    - headers
 
-    - name: Enable required Apache modules
-      apache2_module:
-        name: "{{ item }}"
-        state: present
-      loop:
-        - rewrite
-        - headers
+- name: Install PHP and required extensions
+  apt:
+    name: "{{ php_packages }}"
+    state: present
 
-    - name: Install PHP and required extensions
-      apt:
-        name: "{{ php_packages }}"
-        state: present
+- name: Copy custom php.ini
+  copy:
+    src: php.ini
+    dest: "/etc/php/{{ php_version }}/apache2/php.ini"
+  notify: Restart Apache
 
-    - name: Copy custom php.ini
-      copy:
-        src: php.ini
-        dest: "/etc/php/{{ php_version }}/apache2/php.ini"
-      notify: Restart Apache
+- name: Create Drupal root directory
+  file:
+    path: "{{ drupal_root }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+    recurse: yes
 
-    - name: Create Drupal root directory
-      file:
-        path: "{{ drupal_root }}"
-        state: directory
-        owner: www-data
-        group: www-data
-        mode: '0755'
-        recurse: yes
+- name: Configure Apache virtual host for Drupal
+  template:
+    src: drupal.conf.j2
+    dest: /etc/apache2/sites-available/drupal.conf
+  notify: Restart Apache
 
-    - name: Configure Apache virtual host for Drupal
-      template:
-        src: drupal.conf.j2
-        dest: /etc/apache2/sites-available/drupal.conf
-      notify: Restart Apache
+- name: Enable Drupal virtual host
+  command: a2ensite drupal.conf
+  args:
+    creates: /etc/apache2/sites-enabled/drupal.conf
+  notify: Restart Apache
 
-    - name: Enable Drupal virtual host
-      command: a2ensite drupal.conf
-      args:
-        creates: /etc/apache2/sites-enabled/drupal.conf
-      notify: Restart Apache
-
-    - name: Disable default Apache site
-      command: a2dissite 000-default.conf
-      args:
-        removes: /etc/apache2/sites-enabled/000-default.conf
-      notify: Restart Apache
-
-  handlers:
-    - name: Restart Apache
-      service:
-        name: apache2
-        state: restarted
+- name: Disable default Apache site
+  command: a2dissite 000-default.conf
+  args:
+    removes: /etc/apache2/sites-enabled/000-default.conf
+  notify: Restart Apache
