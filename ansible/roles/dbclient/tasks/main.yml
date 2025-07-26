@@ -5,3 +5,17 @@
     dest: /var/www/html/sites/default/settings.php
     mode: '0644'
   notify: Restart Apache
+
+- name: Install MySQL client
+  apt:
+    name: mysql-client
+    state: present
+
+- name: Test RDS database connection
+  command: >
+    mysql -h {{ rds_endpoint }} -u {{ drupal_db_user }} -p{{ drupal_db_pass }} -e "SHOW DATABASES;"
+  register: db_test
+  changed_when: false
+  ignore_errors: true
+  
+
