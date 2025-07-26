@@ -2,3 +2,8 @@ drupal_site_name: "MyDrupalSite"
 drupal_admin_user: "admin"
 drupal_admin_pass: "strongpassword"
 timezone: "UTC"
+
+packages:
+  php:
+    version: "8.1"
+
