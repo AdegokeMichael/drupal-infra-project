@@ -4,13 +4,20 @@
     src: "https://www.drupal.org/download-latest/tar.gz"
     dest: /var/www/
     remote_src: yes
+    #creates: /var/www/index.php  # Optional: skip extraction if already done
+
+- name: Find the Drupal directory
+  ansible.builtin.find:
+    paths: /var/www/
+    file_type: directory
+    patterns: "^drupal-.*"
+  register: drupal_dir_result
 
 - name: Set correct permissions on Drupal directory
   ansible.builtin.file:
-    path: /var/www/drupal-*
+    path: "{{ item.path }}"
     owner: www-data
     group: www-data
     recurse: yes
     state: directory
-
-
+  loop: "{{ drupal_dir_result.files }}"
