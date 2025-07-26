@@ -8,7 +8,8 @@ services:
     ports:
       - "8080:80"
     volumes:
-      - ./drupal:/var/www/html
+      - ./html/drupal:/var/www/html
+
     depends_on:
       - db
     environment:
