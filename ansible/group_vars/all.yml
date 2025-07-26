@@ -10,7 +10,8 @@ php_packages:
   - php-mbstring
   - libapache2-mod-php
 drupal_root: "/var/www/html"
-
+rds_endpoint: drupal-app-db.c3eewgrpysg2.us-east-1.rds.amazonaws.com
+drupal_db_host: "{{ rds_endpoint }}"
 drupal_db_name: "drupal"
 drupal_db_user: "drupaluser"
 drupal_db_pass: "mysecurepassword123"
