@@ -1,16 +1,41 @@
 ---
+- name: Disable root SSH login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+    state: present
+  notify: Restart SSH
+
+- name: Disable password authentication over SSH
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+    state: present
+  notify: Restart SSH
+
 - name: Ensure UFW is installed
   apt:
     name: ufw
     state: present
-  become: true
+    update_cache: yes
 
-- name: Configure basic firewall rules
+- name: Allow OpenSSH through firewall
   ufw:
     rule: allow
-    name: 'OpenSSH'
+    name: OpenSSH
 
-- name: Enable UFW
+- name: Allow HTTP and HTTPS through firewall
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop:
+    - 80
+    - 443
+
+- name: Enable UFW firewall
   ufw:
     state: enabled
-
+    policy: deny
