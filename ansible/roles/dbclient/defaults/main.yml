@@ -1,5 +1,5 @@
 ---
-drupal_db_host: "{{ lookup('env', 'DB_HOST') | default('my-drupal-db.abcdefghijkl.us-east-1.rds.amazonaws.com', true) }}"
+drupal_db_host: "{{ lookup('env', 'DB_HOST') | default('drupal-app-db.c3eewgrpysg2.us-east-1.rds.amazonaws.com', true) }}"
 drupal_db_name: drupal
 drupal_db_user: drupaluser
 drupal_db_pass: "{{ lookup('env', 'DB_PASSWORD') | default('securepassword123', true) }}"
