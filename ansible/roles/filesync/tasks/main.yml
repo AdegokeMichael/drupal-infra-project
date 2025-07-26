@@ -1,17 +1,21 @@
 ---
-- name: Sync Drupal settings file
-  ansible.builtin.template:
-    src: drupal.settings.php.j2
-    dest: /var/www/html/sites/default/settings.php
-    owner: www-data
-    group: www-data
-    mode: '0644'
-
-- name: Ensure files directory is writable
+- name: Ensure Drupal files directory exists
   ansible.builtin.file:
     path: /var/www/html/sites/default/files
     state: directory
     owner: www-data
     group: www-data
-    mode: '0755'
+    mode: '0775'
+    recurse: yes
+
+- name: Sync Drupal files directory from master node (optional)
+  ansible.posix.synchronize:
+    src: /var/www/html/sites/default/files/
+    dest: /var/www/html/sites/default/files/
+    recursive: yes
+    delete: no
+    rsync_opts:
+      - "--exclude=*.tmp"
+  delegate_to: "{{ groups['web'][0] }}"
+
 
