@@ -1,24 +1,16 @@
 ---
+- name: Apply common base configuration to all servers
+  hosts: all
+  become: true
+  roles:
+    - common
+
 - name: Provision Drupal Web Servers
   hosts: web
   become: true
   roles:
-    - role: common
-    - role: web
-    - role: dbclient
-    - role: drupal
-    - role: filesync
-    - role: harden
-
- - name: Setup common base configuration
-   hosts: all
-   become: true
-   roles:
-    - common
-   
- - hosts: webservers
-   become: yes
-   roles:
-    - common
     - web
     - dbclient
+    - drupal
+    - filesync
+    - harden
