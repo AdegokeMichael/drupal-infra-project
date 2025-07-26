@@ -1,0 +1,17 @@
+# group_vars/all.yml
+
+# Set timezone
+timezone: Africa/Lagos
+
+# Set the deploy user
+create_user: ubuntu
+
+# Define common packages to install
+common_packages:
+  - curl
+  - unzip
+  - git
+  - htop
+  - ufw
+  - fail2ban
+  - wget
