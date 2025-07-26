@@ -1,3 +1,28 @@
+resource "aws_security_group" "bastion_sg" {
+  name        = "${var.project}-bastion-sg"
+  description = "Allow SSH from your IP"
+  vpc_id      = var.vpc_id
+
+  ingress {
+    description = "SSH from your local machine"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = [var.my_ip_cidr] # e.g. ["105.113.x.x/32"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "${var.project}-bastion-sg"
+  }
+}
+
 resource "aws_security_group" "alb_sg" {
   name        = "${var.project}-alb-sg"
   description = "Allow HTTP(s) from anywhere"
