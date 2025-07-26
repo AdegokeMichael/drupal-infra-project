@@ -1,4 +1,15 @@
 # group_vars/all.yml
+php_version: "8.2"  # or auto-generate if needed
+php_packages:
+  - php
+  - php-cli
+  - php-common
+  - php-mysql
+  - php-xml
+  - php-gd
+  - php-mbstring
+  - libapache2-mod-php
+drupal_root: "/var/www/html"
 
 # Set timezone
 timezone: Africa/Lagos
