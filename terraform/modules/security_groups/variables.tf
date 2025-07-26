@@ -13,6 +13,6 @@ variable "bastion_cidr" {
   type        = string
 }
 variable "my_ip_cidr" {
-  description = "102.89.22.112/32"
+  description = "Your public IP in CIDR format"
   type        = string
 }
