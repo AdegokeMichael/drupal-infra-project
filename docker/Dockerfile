@@ -4,6 +4,6 @@ RUN apt-get update && apt-get install -y \
     libpng-dev libjpeg-dev libfreetype6-dev zip libzip-dev unzip mariadb-client \
     && docker-php-ext-install pdo pdo_mysql gd zip
 
-COPY drupal/html/drupal /var/www/html/
+COPY drupal/html/ /var/www/html/
 
 RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
