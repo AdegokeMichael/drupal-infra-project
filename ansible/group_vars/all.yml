@@ -28,9 +28,10 @@ php_packages:
   - php-zip
 state: present
 update_cache: yes
+load_balancer_dns: drupal-app-alb-1234587071.us-east-1.elb.amazonaws.com
 
 drupal_root: "/var/www/html"
-rds_endpoint: drupal-app-db.c3eewgrpysg2.us-east-1.rds.amazonaws.com -P 3306
+rds_endpoint: ddrupal-app-alb-1234587071.us-east-1.elb.amazonaws.com -P 3306
 drupal_db_host: "{{ rds_endpoint }}"
 drupal_db_name: "drupaldb"
 drupal_db_user: "drupal"
