@@ -1,4 +1,25 @@
 ---
+
+- name: Set Drupal version
+  set_fact:
+    drupal_version: "10.2.5"
+
+- name: Download Drupal {{ drupal_version }}
+  get_url:
+    url: "https://ftp.drupal.org/files/projects/drupal-{{ drupal_version }}.tar.gz"
+    dest: /tmp/drupal.tar.gz
+
+- name: Extract Drupal
+  unarchive:
+    src: /tmp/drupal.tar.gz
+    dest: /var/www/
+    remote_src: yes
+
+- name: Move extracted Drupal to /var/www/html
+  command: mv /var/www/drupal-{{ drupal_version }} /var/www/html
+  args:
+    creates: /var/www/html
+
 - name: Install Composer globally
   get_url:
     url: https://getcomposer.org/installer
@@ -9,8 +30,8 @@
   args:
     creates: /usr/local/bin/composer
 
-- name: Install Drush (Drupal CLI)
-  command: composer global require drush/drush
+- name: Install Drush (Drupal CLI) - version compatible with Drupal 10
+  command: composer global require drush/drush:^11
   environment:
     COMPOSER_HOME: /root/.composer
   args:
@@ -22,6 +43,12 @@
     dest: /usr/local/bin/drush
     state: link
     force: yes
+
+- name: Check if Drush is installed and callable
+  command: drush --version
+  register: drush_check
+  failed_when: drush_check.rc != 0
+  ignore_errors: no
 
 - name: Change ownership of Drupal directory
   file:
