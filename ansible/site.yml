@@ -5,33 +5,6 @@
   roles:
     - common
      
-- name: Add Ondřej Surý's PHP PPA repository
-  apt_repository:
-    repo: ppa:ondrej/php
-    state: present
-    update_cache: yes
-
-- name: Pin PHP to version {{ php_version }}
-  copy:
-    dest: /etc/apt/preferences.d/php
-    content: |
-      Package: php*
-      Pin: version {{ php_version }}*
-      Pin-Priority: 1001
-  notify: Update apt cache
-
-- name: Install PHP 8.1 and required modules
-  apt:
-    name: "{{ php_packages }}"
-    state: present
-
-- name: Check installed PHP version
-  command: php -r 'echo PHP_VERSION;'
-  register: php_actual_version
-
-- name: Show installed PHP version
-  debug:
-    msg: "Installed PHP version: {{ php_actual_version.stdout }}"
 - name: Set up web environment
   hosts: web
   become: true
