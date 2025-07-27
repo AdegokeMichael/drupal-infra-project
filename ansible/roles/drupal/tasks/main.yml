@@ -1,3 +1,8 @@
+- name: Add PHP repository
+  apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+
 - name: Ensure required packages are installed
   apt:
     name: "{{ item }}"
