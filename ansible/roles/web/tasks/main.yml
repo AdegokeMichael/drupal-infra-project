@@ -63,7 +63,7 @@
 
 - name: Set Drupal version
   set_fact:
-    drupal_version: "10.2.3"  # <-- set your desired version here
+    drupal_version: "10.2.5"  # <-- set your desired version here
 
 - name: Download specific Drupal version
   get_url:
