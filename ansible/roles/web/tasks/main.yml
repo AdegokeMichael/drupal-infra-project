@@ -82,10 +82,10 @@
     group: www-data
     mode: '0755'
 
-- name: Ensure default settings.php exists
-  copy:
-    src: settings.php
-    dest: "{{ drupal_root }}/sites/default/settings.php"
+- name: Deploy drupal settings.php exists
+  template:
+    src: drupal.settings.php
+    dest: "{{ drupal_root }}/sites/default/drupal.settings.php"
     owner: www-data
     group: www-data
     mode: '0644'
