@@ -78,13 +78,13 @@
    # extra_opts: [--strip-components=1]
    # creates: "{{ drupal_root }}/index.php"
 
-- name: Ensure sites/default directory exists
-  file:
-    path: "{{ drupal_root }}/sites/default"
-    state: directory
-    owner: www-data
-    group: www-data
-    mode: '0755'
+#- name: Ensure sites/default directory exists
+#  file:
+ #   path: "{{ drupal_root }}/sites/default"
+ #   state: directory
+#    owner: www-data
+  #  group: www-data
+  #  mode: '0755'
 
 #- name: Deploy drupal settings.php 
  # template:
@@ -100,22 +100,22 @@
     dest: /etc/apache2/sites-available/drupal.conf
   notify: Restart Apache
 
-- name: Enable Drupal site
-  command: a2ensite drupal.conf
-  args:
-    creates: /etc/apache2/sites-enabled/drupal.conf
-  notify: Restart Apache
+#- name: Enable Drupal site
+ # command: a2ensite drupal.conf
+  #args:
+   # creates: /etc/apache2/sites-enabled/drupal.conf
+  #notify: Restart Apache
 
-- name: Disable default Apache site
-  command: a2dissite 000-default.conf
-  args:
-    removes: /etc/apache2/sites-enabled/000-default.conf
-  notify: Restart Apache
+#- name: Disable default Apache site
+ # command: a2dissite 000-default.conf
+  #args:
+   # removes: /etc/apache2/sites-enabled/000-default.conf
+  #notify: Restart Apache
 
-- name: Set permissions for Drupal files
-  file:
-    path: "{{ drupal_root }}"
-    state: directory
-    recurse: yes
-    owner: www-data
-    group: www-data
+#- name: Set permissions for Drupal files
+ # file:
+  #  path: "{{ drupal_root }}"
+   # state: directory
+   # recurse: yes
+   # owner: www-data
+   # group: www-data
