@@ -1,4 +1,10 @@
 ---
+
+- name: Install MySQL client
+  apt:
+    name: mysql-client
+    state: present
+
 - name: Ensure Drupal default directory exists
   file:
     path: /var/www/html/sites/default
@@ -17,10 +23,7 @@
     mode: '0644'
   notify: Restart Apache
 
-- name: Install MySQL client
-  apt:
-    name: mysql-client
-    state: present
+
 
 - name: Test RDS database connection
   command: >
