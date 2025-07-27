@@ -4,8 +4,9 @@
   apt:
     name: apache2
     state: present
+    update_cache: yes
 
-- name: Enable Apache mods
+- name: Enable necessary Apache modules
   apache2_module:
     name: "{{ item }}"
     state: present
@@ -14,20 +15,32 @@
     - headers
   notify: Restart Apache
 
-- name: Ensure PHP {{ php_version }} is prioritized (via update-alternatives)
+- name: Add PHP PPA repository
+  apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+    update_cache: yes
+
+- name: Pin PHP to version {{ php_version }}
+  copy:
+    dest: /etc/apt/preferences.d/php
+    content: |
+      Package: php*
+      Pin: version {{ php_version }}*
+      Pin-Priority: 1001
+  notify: Update apt cache
+
+- name: Install PHP and extensions
+  apt:
+    name: "{{ php_packages }}"
+    state: present
+    update_cache: yes
+
+- name: Set PHP version using update-alternatives
   command: "update-alternatives --install /usr/bin/php php /usr/bin/php{{ php_version }} 81"
   args:
     warn: false
-  become: true
-  ignore_errors: yes  # In case php8.1-cli not yet installed  
-
-- name: Install PHP and required extensions (PHP {{ php_version }})
-  apt:
-    name: "{{ item }}"
-    state: present
-    update_cache: yes
-  loop: "{{ php_packages }}"
-  become: true  
+  ignore_errors: true
 
 - name: Copy custom php.ini
   copy:
@@ -38,7 +51,7 @@
     mode: '0644'
   notify: Restart Apache
 
-- name: Ensure Drupal root directory exists
+- name: Create Drupal root directory
   file:
     path: "{{ drupal_root }}"
     state: directory
@@ -47,36 +60,18 @@
     mode: '0755'
     recurse: yes
 
-- name: Download latest Drupal archive
+- name: Download latest Drupal
   get_url:
     url: https://www.drupal.org/download-latest/tar.gz
     dest: /tmp/drupal.tar.gz
 
-- name: Extract Drupal directly into root folder
+- name: Extract Drupal into web root
   unarchive:
     src: /tmp/drupal.tar.gz
     dest: "{{ drupal_root }}"
     remote_src: yes
     extra_opts: [--strip-components=1]
     creates: "{{ drupal_root }}/index.php"
-
-
-#- name: Get extracted Drupal directory name
-#  find:
- #   paths: /var/www/html/drupal
- #   file_type: directory
- #   patterns: 'drupal-*'
- # register: drupal_dir
-
-#- name: Move Drupal files to root directory
- # command: mv {{ drupal_dir.files[0].path }}/* /var/www/html/drupal/
- # when: drupal_dir.matched > 0
-    
-
-#- name: Move Drupal files to root directory
- # command: mv {{ drupal_root }}/drupal-*/* {{ drupal_root }}/
-  #args:
-   # removes: "{{ drupal_root }}/drupal-*"
 
 - name: Ensure sites/default directory exists
   file:
@@ -87,7 +82,7 @@
     mode: '0755'
     recurse: yes
 
-- name: Configure Apache virtual host for Drupal
+- name: Copy Apache Drupal virtual host config
   template:
     src: drupal.conf.j2
     dest: /etc/apache2/sites-available/drupal.conf
@@ -95,8 +90,20 @@
 
 - name: Enable Drupal virtual host
   command: a2ensite drupal.conf
+  args:
+    creates: /etc/apache2/sites-enabled/drupal.conf
   notify: Restart Apache
 
 - name: Disable default Apache site
   command: a2dissite 000-default.conf
+  args:
+    removes: /etc/apache2/sites-enabled/000-default.conf
   notify: Restart Apache
+
+- name: Ensure correct permissions for Drupal files
+  file:
+    path: "{{ drupal_root }}"
+    state: directory
+    recurse: yes
+    owner: www-data
+    group: www-data
