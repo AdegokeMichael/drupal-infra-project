@@ -6,7 +6,6 @@
       - php
       - php-mysql
       - php-gd
-      - php-dom
       - php-xml
       - php-mbstring
       - php-curl
