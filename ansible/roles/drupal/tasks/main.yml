@@ -1,23 +1,51 @@
----
-- name: Download and extract Drupal
-  ansible.builtin.unarchive:
-    src: "https://www.drupal.org/download-latest/tar.gz"
-    dest: /var/www/
+- name: Ensure required packages are installed
+  apt:
+    name:
+      - curl
+      - unzip
+      - php
+      - php-mysql
+      - php-gd
+      - php-dom
+      - php-xml
+      - php-mbstring
+      - php-curl
+      - php-zip
+      - apache2
+    state: present
+    update_cache: yes
+
+- name: Download Drupal
+  get_url:
+    url: https://ftp.drupal.org/files/projects/drupal-10.2.5.tar.gz
+    dest: /tmp/drupal.tar.gz
+
+- name: Extract Drupal
+  unarchive:
+    src: /tmp/drupal.tar.gz
+    dest: /tmp/
     remote_src: yes
-    creates: /var/www/index.php  # Optional: skip extraction if already done
 
-- name: Find the Drupal directory
-  ansible.builtin.find:
-    paths: /var/www/
-    file_type: directory
-    patterns: "^drupal-.*"
-  register: drupal_dir_result
+- name: Remove existing web root (optional - use with caution)
+  file:
+    path: /var/www/html
+    state: absent
 
-- name: Set correct permissions on Drupal directory
-  ansible.builtin.file:
-    path: "{{ item.path }}"
+- name: Copy Drupal to web root
+  copy:
+    src: /tmp/drupal-10.2.5/
+    dest: /var/www/html/
+    remote_src: yes
+
+- name: Set permissions for Drupal directory
+  file:
+    path: /var/www/html
+    state: directory
+    recurse: yes
     owner: www-data
     group: www-data
-    recurse: yes
-    state: directory
-  loop: "{{ drupal_dir_result.files }}"
+
+- name: Restart Apache
+  service:
+    name: apache2
+    state: restarted
