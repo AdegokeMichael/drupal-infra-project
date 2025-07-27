@@ -1,15 +1,5 @@
 ---
 
-- name: Add Ondrej PHP PPA
-  apt_repository:
-    repo: ppa:ondrej/php
-    state: present
-  become: true
-
-- name: Update apt cache after adding repo
-  apt:
-    update_cache: yes
-
 - name: Install Apache
   apt:
     name: apache2
