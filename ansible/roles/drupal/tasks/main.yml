@@ -1,6 +1,9 @@
 - name: Ensure required packages are installed
   apt:
-    name:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:  
       - curl
       - unzip
       - php
@@ -11,38 +14,54 @@
       - php-curl
       - php-zip
       - apache2
-    state: present
-    update_cache: yes
+    
+  
 
-- name: Download Drupal
+- name: Download latest Drupal release
   get_url:
-    url: https://ftp.drupal.org/files/projects/drupal-10.2.5.tar.gz
+    url: https://www.drupal.org/download-latest/tar.gz
     dest: /tmp/drupal.tar.gz
+    mode: '0644'
 
-- name: Extract Drupal
+- name: Remove previous extracted Drupal folder (if any)
+  file:
+    path: "/tmp/drupal-10.2.5"
+    state: absent
+
+- name: Extract Drupal archive to /tmp
   unarchive:
     src: /tmp/drupal.tar.gz
     dest: /tmp/
     remote_src: yes
+    creates: /tmp/drupal-10.2.5
 
-- name: Remove existing web root (optional - use with caution)
+- name: Clean existing web root
   file:
     path: /var/www/html
     state: absent
 
-- name: Copy Drupal to web root
-  copy:
-    src: /tmp/drupal-10.2.5/
-    dest: /var/www/html/
-    remote_src: yes
+- name: Recreate web root directory
+  file:
+    path: /var/www/html
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
 
-- name: Set permissions for Drupal directory
+- name: Copy Drupal files to web root
+  shell: |
+    cp -r /tmp/drupal-*/. /var/www/html/
+  args:
+    warn: false
+
+- name: Set proper ownership for web root
   file:
     path: /var/www/html
     state: directory
     recurse: yes
     owner: www-data
     group: www-data
+
 
 - name: Restart Apache
   service:
