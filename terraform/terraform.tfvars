@@ -6,5 +6,5 @@ instance_type = "t3.micro"
 ami_id       = "ami-020cba7c55df1f615"
 db_username = "drupal"
 db_password = "MyStr0ngPassw0rd-123"
-my_ip_cidr = "102.89.22.112/32"
+my_ip_cidr = "0.0.0.0/0"
 
