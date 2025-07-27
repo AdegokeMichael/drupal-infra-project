@@ -1,4 +1,4 @@
-rds_endpoint: drupal-app-db.c3eewgrpysg2.us-east-1.rds.amazonaws.com:3306
+rds_endpoint: drupal-app-db.c3eewgrpysg2.us-east-1.rds.amazonaws.com -P 3306
 drupal_db_name: "drupaldb"
 drupal_db_user: "drupal"
 drupal_db_pass: "MyStr0ngPassw0rd-123"
