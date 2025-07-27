@@ -60,6 +60,19 @@
     owner: www-data
     group: www-data
 
+- name: Configure Apache virtual host for Drupal
+  template:
+    src: drupal.conf.j2
+    dest: /etc/apache2/sites-available/drupal.conf
+  notify:
+    - Reload Apache
+
+- name: Enable Drupal site and disable default
+  shell: |
+    a2dissite 000-default.conf || true
+    a2ensite drupal.conf
+  notify:
+    - Reload Apache
 
 
 - name: Restart Apache
