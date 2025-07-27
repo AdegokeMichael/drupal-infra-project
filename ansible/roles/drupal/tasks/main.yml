@@ -31,16 +31,14 @@
   shell: a2enmod php8.1    
   
 
-- name: Download latest Drupal release
-  get_url:
-    url: https://www.drupal.org/download-latest/tar.gz
-    dest: /tmp/drupal.tar.gz
-    mode: '0644'
+- name: Set Drupal version
+  set_fact:
+    drupal_version: "10.2.5"  # <-- set your desired version here
 
-- name: Remove previous extracted Drupal folder (if any)
-  file:
-    path: "/tmp/drupal-10.2.5"
-    state: absent
+- name: Download specific Drupal version
+  get_url:
+    url: "https://ftp.drupal.org/files/projects/drupal-{{ drupal_version }}.tar.gz"
+    dest: /tmp/drupal.tar.gz
 
 - name: Extract Drupal archive to /tmp
   unarchive:
