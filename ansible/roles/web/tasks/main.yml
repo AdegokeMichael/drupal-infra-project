@@ -85,7 +85,7 @@
 - name: Deploy drupal settings.php exists
   template:
     src: drupal.settings.php
-    dest: "{{ drupal_root }}/sites/default/drupal.settings.php"
+    dest: "{{ drupal_root }}/sites/default/settings.php"
     owner: www-data
     group: www-data
     mode: '0644'
