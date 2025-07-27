@@ -1,12 +1,14 @@
 ---
+- name: Ensure apt cache is updated
+  apt:
+    update_cache: yes
 
 - name: Install Apache
   apt:
     name: apache2
     state: present
-    update_cache: yes
 
-- name: Enable necessary Apache modules
+- name: Enable Apache modules
   apache2_module:
     name: "{{ item }}"
     state: present
@@ -15,13 +17,13 @@
     - headers
   notify: Restart Apache
 
-- name: Add PHP PPA repository
+- name: Add PHP 8.1 PPA
   apt_repository:
     repo: ppa:ondrej/php
     state: present
     update_cache: yes
 
-- name: Pin PHP to version {{ php_version }}
+- name: Pin PHP version
   copy:
     dest: /etc/apt/preferences.d/php
     content: |
@@ -30,17 +32,16 @@
       Pin-Priority: 1001
   notify: Update apt cache
 
-- name: Install PHP and extensions
+- name: Install PHP 8.1 and extensions
   apt:
     name: "{{ php_packages }}"
     state: present
-    update_cache: yes
 
-- name: Set PHP version using update-alternatives
-  command: "update-alternatives --install /usr/bin/php php /usr/bin/php{{ php_version }} 81"
-  args:
-    warn: false
-  ignore_errors: true
+- name: Set default PHP version
+  alternatives:
+    name: php
+    path: "/usr/bin/php{{ php_version }}"
+  ignore_errors: yes
 
 - name: Copy custom php.ini
   copy:
@@ -80,15 +81,22 @@
     owner: www-data
     group: www-data
     mode: '0755'
-    recurse: yes
 
-- name: Copy Apache Drupal virtual host config
+- name: Ensure default settings.php exists
+  copy:
+    src: settings.php
+    dest: "{{ drupal_root }}/sites/default/settings.php"
+    owner: www-data
+    group: www-data
+    mode: '0644'
+
+- name: Copy Apache Drupal VirtualHost config
   template:
     src: drupal.conf.j2
     dest: /etc/apache2/sites-available/drupal.conf
   notify: Restart Apache
 
-- name: Enable Drupal virtual host
+- name: Enable Drupal site
   command: a2ensite drupal.conf
   args:
     creates: /etc/apache2/sites-enabled/drupal.conf
@@ -100,7 +108,7 @@
     removes: /etc/apache2/sites-enabled/000-default.conf
   notify: Restart Apache
 
-- name: Ensure correct permissions for Drupal files
+- name: Set permissions for Drupal files
   file:
     path: "{{ drupal_root }}"
     state: directory
