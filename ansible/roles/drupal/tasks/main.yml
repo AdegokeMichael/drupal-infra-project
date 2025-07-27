@@ -31,22 +31,17 @@
   shell: a2enmod php8.1    
   
 
-- name: Set Drupal version
-  set_fact:
-    drupal_version: "10.2.5"  # <-- set your desired version here
-
-- name: Download specific Drupal version
+- name: Ensure Composer is installed globally
   get_url:
-    url: "https://ftp.drupal.org/files/projects/drupal-{{ drupal_version }}.tar.gz"
-    dest: /tmp/drupal.tar.gz
+    url: https://getcomposer.org/installer
+    dest: /tmp/composer-setup.php
 
-- name: Extract Drupal archive to /tmp
-  unarchive:
-    src: /tmp/drupal.tar.gz
-    dest: /tmp/
-    remote_src: yes
+- name: Run Composer installer
+  command: php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+  args:
+    creates: /usr/local/bin/composer
 
-- name: Clean existing web root
+- name: Clean web root if exists
   file:
     path: /var/www/html
     state: absent
@@ -59,18 +54,10 @@
     group: www-data
     mode: '0755'
 
-- name: Copy Drupal files to web root
-  shell: cp -r /tmp/drupal-*/. /var/www/html/
+- name: Create new Drupal project with Composer
+  command: composer create-project drupal/recommended-project /var/www/html
   args:
-    executable: /bin/bash
-
-- name: Set ownership and permissions
-  file:
-    path: /var/www/html
-    state: directory
-    recurse: yes
-    owner: www-data
-    group: www-data
+    creates: /var/www/html/composer.json
 
 - name: Configure Apache virtual host for Drupal
   template:
