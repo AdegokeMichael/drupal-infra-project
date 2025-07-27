@@ -1,6 +1,6 @@
 # group_vars/all.yml
 
-php_version: "8.3"
+php_version: "8.1"
 php_packages:
   - php{{ php_version }}
   - php{{ php_version }}-cli
@@ -15,7 +15,7 @@ php_packages:
 state: present
 update_cache: yes  
   
-php_version: "8.3"  # or auto-generate if needed
+php_version: "8.1"  # or auto-generate if needed
 php_packages:
   - php
   - php-cli
