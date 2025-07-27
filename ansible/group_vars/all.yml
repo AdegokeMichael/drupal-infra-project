@@ -1,5 +1,5 @@
 # group_vars/all.yml
-php_version: "8.2"  # or auto-generate if needed
+php_version: "8.1"  # or auto-generate if needed
 php_packages:
   - php
   - php-cli
@@ -9,6 +9,12 @@ php_packages:
   - php-gd
   - php-mbstring
   - libapache2-mod-php
+  - php-dom
+  - php-curl
+  - php-zip
+state: present
+update_cache: yes
+
 drupal_root: "/var/www/html"
 rds_endpoint: drupal-app-db.c3eewgrpysg2.us-east-1.rds.amazonaws.com -P 3306
 drupal_db_host: "{{ rds_endpoint }}"
