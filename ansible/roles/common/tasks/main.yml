@@ -4,10 +4,10 @@
     update_cache: yes
     cache_valid_time: 3600
 
-- name: Upgrade all packages
+- name: Upgrade non-PHP packages (safe mode )
   apt:
-    upgrade: dist
-  notify: Reboot if required
+    upgrade: safe
+ # notify: Reboot if required
 
 - name: Set timezone
   timezone:
