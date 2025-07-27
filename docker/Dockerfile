@@ -1,9 +1,23 @@
-FROM php:8.2-apache
+FROM php:8.1-apache
 
+# Install PHP extensions required for Drupal
 RUN apt-get update && apt-get install -y \
-    libpng-dev libjpeg-dev libfreetype6-dev zip libzip-dev unzip mariadb-client \
-    && docker-php-ext-install pdo pdo_mysql gd zip
+    libzip-dev unzip git curl libonig-dev mariadb-client \
+    && docker-php-ext-install pdo pdo_mysql zip
 
-COPY drupal/html/ /var/www/html/
+# Enable Apache mod_rewrite
+RUN a2enmod rewrite
 
-RUN chown -R www-data:www-data /var/www/html && chmod -R 755 /var/www/html
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php \
+    && mv composer.phar /usr/local/bin/composer
+
+# Set working directory
+WORKDIR /var/www/html
+
+# Copy entrypoint script if needed
+COPY scripts/install-drupal.sh /usr/local/bin/install-drupal.sh
+RUN chmod +x /usr/local/bin/install-drupal.sh
+
+# Expose port
+EXPOSE 80
