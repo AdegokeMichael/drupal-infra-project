@@ -61,9 +61,13 @@
     mode: '0755'
     recurse: yes
 
-- name: Download latest Drupal
+- name: Set Drupal version
+  set_fact:
+    drupal_version: "10.2.3"  # <-- set your desired version here
+
+- name: Download specific Drupal version
   get_url:
-    url: https://www.drupal.org/download-latest/tar.gz
+    url: "https://ftp.drupal.org/files/projects/drupal-{{ drupal_version }}.tar.gz"
     dest: /tmp/drupal.tar.gz
 
 - name: Extract Drupal into web root
