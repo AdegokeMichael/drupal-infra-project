@@ -82,9 +82,9 @@
     group: www-data
     mode: '0755'
 
-- name: Deploy drupal settings.php exists
+- name: Deploy drupal settings.php 
   template:
-    src: drupal.settings.php
+    src: settings.php
     dest: "{{ drupal_root }}/sites/default/settings.php"
     owner: www-data
     group: www-data
