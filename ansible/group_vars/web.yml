@@ -10,7 +10,7 @@ php_packages:
   - libapache2-mod-php{{ php_version }}
 
 # Drupal Configuration
-drupal_root: /var/www/html/drupal
+drupal_root: /var/www/html
 drupal_site_name: "MyDrupalSite"
 drupal_admin_user: "admin"
 drupal_admin_pass: "strongpassword"
