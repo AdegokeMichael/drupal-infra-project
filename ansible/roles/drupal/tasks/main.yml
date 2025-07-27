@@ -33,7 +33,6 @@
     src: /tmp/drupal.tar.gz
     dest: /tmp/
     remote_src: yes
-    creates: /tmp/drupal-10.2.5
 
 - name: Clean existing web root
   file:
@@ -49,18 +48,18 @@
     mode: '0755'
 
 - name: Copy Drupal files to web root
-  shell: |
-    cp -r /tmp/drupal-*/. /var/www/html/
+  shell: cp -r /tmp/drupal-*/. /var/www/html/
   args:
-    warn: false
+    executable: /bin/bash
 
-- name: Set proper ownership for web root
+- name: Set ownership and permissions
   file:
     path: /var/www/html
     state: directory
     recurse: yes
     owner: www-data
     group: www-data
+
 
 
 - name: Restart Apache
