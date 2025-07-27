@@ -9,4 +9,4 @@ common_packages:
   - fail2ban
 
 timezone: "UTC"
-create_user: "deployer"
+create_user: "ubuntu"
