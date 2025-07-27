@@ -1,13 +1,13 @@
 ---
 drupal_root: /var/www/html/drupal
 php_packages:
-  - php
-  - php-cli
-  - php-common
-  - php-mysql
-  - php-xml
-  - php-gd
-  - php-curl
-  - php-mbstring
-  - php-zip
-  - php-json
+  - php8.1
+  - php8.1-cli
+  - php8.1-common
+  - php8.1-mysql
+  - php8.1-xml
+  - php8.1-gd
+  - php8.1-curl
+  - php8.1-mbstring
+  - php8.1-zip
+  - php8.1-json
