@@ -19,6 +19,7 @@
       - php{{ php_version }}-curl
       - php{{ php_version }}-mbstring
       - php{{ php_version }}-zip
+      - php{{ php_version }}-dom
     drupal_root: /var/www/html/drupal
   roles:
     - web
