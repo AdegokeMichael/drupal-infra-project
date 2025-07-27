@@ -24,10 +24,20 @@
     - headers
   notify: Restart Apache
 
-- name: Install PHP and required extensions
+- name: Ensure PHP {{ php_version }} is prioritized (via update-alternatives)
+  command: "update-alternatives --install /usr/bin/php php /usr/bin/php{{ php_version }} 81"
+  args:
+    warn: false
+  become: true
+  ignore_errors: yes  # In case php8.1-cli not yet installed  
+
+- name: Install PHP and required extensions (PHP {{ php_version }})
   apt:
-    name: "{{ php_packages }}"
+    name: "{{ item }}"
     state: present
+    update_cache: yes
+  loop: "{{ php_packages }}"
+  become: true  
 
 - name: Copy custom php.ini
   copy:
