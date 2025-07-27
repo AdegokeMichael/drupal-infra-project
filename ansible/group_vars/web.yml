@@ -1,13 +1,4 @@
-# PHP Configuration
-php_version: "8.1"
-php_packages:
-  - php{{ php_version }}
-  - php{{ php_version }}-cli
-  - php{{ php_version }}-common
-  - php{{ php_version }}-mysql
-  - php{{ php_version }}-xml
-  - php{{ php_version }}-mbstring
-  - libapache2-mod-php{{ php_version }}
+
 
 # Drupal Configuration
 drupal_root: /var/www/html
