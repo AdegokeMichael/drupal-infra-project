@@ -1,4 +1,18 @@
 # group_vars/all.yml
+
+php_version: "8.1"
+php_packages:
+  - php{{ php_version }}
+  - php{{ php_version }}-cli
+  - php{{ php_version }}-common
+  - php{{ php_version }}-mysql
+  - php{{ php_version }}-xml
+  - php{{ php_version }}-gd
+  - php{{ php_version }}-mbstring
+  - libapache2-mod-php{{ php_version }}
+  - php{{ php_version }}-curl
+  - php{{ php_version }}-curl
+  
 php_version: "8.1"  # or auto-generate if needed
 php_packages:
   - php
