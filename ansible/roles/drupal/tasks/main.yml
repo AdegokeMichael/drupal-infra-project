@@ -25,7 +25,7 @@
 
       
 - name: Disable other PHP versions
-  shell: a2dismod php7.* || true
+  shell: a2dismod php7.* php8.4 php8.0 php || true
 
 - name: Enable PHP 8.1
   shell: a2enmod php8.1    
