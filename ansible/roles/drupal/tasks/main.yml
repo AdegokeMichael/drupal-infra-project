@@ -8,15 +8,15 @@
     mode: '0755'
 
 - name: Download Drupal using Composer
-  shell: composer create-project --no-interaction --prefer-dist drupal/recommended-project/drupal
+  shell: composer create-project --no-interaction --prefer-dist drupal/recommended-project .
   args:
     chdir: "{{ web_root }}"
-    creates: "{{ web_root }}/drupal"
+    creates: "{{ web_root }}/web"
 
 - name: Quick start Drupal site (Umami demo)
   shell: php -d memory_limit=256M web/core/scripts/drupal quick-start demo_umami
   args:
-    chdir: "{{ drupal_project_dir }}"
+    chdir: "{{ drupal_project_dir }}/web"
     creates: "{{ drupal_project_dir }}/web/sites/default/settings.php"
 
 - import_tasks: db_config.yml
