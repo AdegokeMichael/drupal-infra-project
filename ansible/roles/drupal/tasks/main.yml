@@ -1,4 +1,5 @@
 ---
+
 - name: Ensure Composer is installed
   stat:
     path: "{{ composer_path }}"
@@ -21,11 +22,7 @@
   file:
     path: "{{ drupal_project_dir }}"
     state: absent
-  when: drupal_project_dir is defined
-- name: Verify Drupal installation directory exists
-  stat:
-    path: "{{ drupal_project_dir }}/web"
-  register: drupal_web_dir  
+  when: drupal_project_dir is defined and force_reinstall | default(false)
 
 - name: Create Drupal project directory
   file:
@@ -35,24 +32,16 @@
     group: www-data
     mode: '0755'
 
-- name: Check if Drupal already installed
+- name: Check if Drupal installation directory exists
   stat:
-    path: "{{ drupal_project_dir }}/composer.json"
-  register: drupal_project_check
-- name: Set drupal_installed fact based on Drupal installation
+    path: "{{ drupal_project_dir }}/web"
+  register: drupal_web_dir
+
+- name: Set drupal_installed fact
   set_fact:
     drupal_installed: "{{ drupal_web_dir.stat.exists }}"
 
-
-#- name: Install Drupal using Composer
- # command: composer create-project drupal/recommended-project "{{ drupal_project_dir }}"
- # args:
- #   chdir: /var/www/html
- # become: true
- # become_user: www-data
- # creates: "{{ drupal_project_dir }}/web"
-
-- name: Download Drupal using Composer
+- name: Install Drupal using Composer
   command: >
     {{ composer_path }} create-project {{ composer_project }} {{ drupal_project_dir }}
   args:
@@ -62,12 +51,14 @@
   register: drupal_composer_result
   changed_when: "'Installing drupal/core' in drupal_composer_result.stdout"
   failed_when: drupal_composer_result.rc != 0
-  when: not drupal_installed  
+  when: not drupal_installed
 
 - name: Fail if Drupal installation failed
-  fail:
-    msg: "Composer did not create the expected Drupal directory '{{ drupal_project_dir }}/web'."
-  when: not drupal_web_dir.stat.exists      
+  stat:
+    path: "{{ drupal_project_dir }}/web"
+  register: post_install_check
+  failed_when: not post_install_check.stat.exists
+  when: not drupal_installed
 
 - name: Quick start Drupal site (e.g. Umami demo)
   shell: >
