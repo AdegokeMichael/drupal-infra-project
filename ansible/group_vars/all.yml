@@ -2,7 +2,7 @@
 
 php_version: "8.1"
 web_root: "/var/www/html"
-drupal_project_dir: "/var/www/html/drupal"
+drupal_project_dir: "/var/www/html/"
 
 
 #drupal_root: "/var/www/html"
