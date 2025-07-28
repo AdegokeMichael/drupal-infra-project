@@ -4,7 +4,7 @@ metadata:
   name: drupal
   namespace: drupal
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: drupal
@@ -14,25 +14,26 @@ spec:
         app: drupal
     spec:
       containers:
-        - name: drupal
-          image: drupal:10
-          ports:
-            - containerPort: 80
-          env:
-            - name: DRUPAL_DB_HOST
-              value: mysql
-            - name: DRUPAL_DB_NAME
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-secret
-                  key: mysql-database
-            - name: DRUPAL_DB_USER
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-secret
-                  key: mysql-user
-            - name: DRUPAL_DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mysql-secret
-                  key: mysql-password
+      - name: drupal
+        image: your-dockerhub-username/drupal:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: DRUPAL_DATABASE_HOST
+          value: "drupal-mysql"
+        - name: DRUPAL_DATABASE_NAME
+          value: "drupal"
+        - name: DRUPAL_DATABASE_USER
+          value: "drupal"
+        - name: DRUPAL_DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: drupal-db-secret
+              key: password
+        volumeMounts:
+        - name: drupal-data
+          mountPath: /var/www/html/sites
+      volumes:
+      - name: drupal-data
+        persistentVolumeClaim:
+          claimName: drupal-pvc
