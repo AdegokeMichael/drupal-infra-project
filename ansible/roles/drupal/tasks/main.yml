@@ -7,11 +7,15 @@
     group: www-data
     mode: '0755'
 
-- name: Download Drupal using Composer
-  shell: composer create-project drupal/recommended-project drupal
+- name: Download Drupal using Composer (non-interactive)
+  shell: >
+    COMPOSER_ALLOW_SUPERUSER=1 COMPOSER_NO_INTERACTION=1
+    composer create-project drupal/recommended-project drupal
   args:
     chdir: "{{ web_root }}"
-    creates: "{{ drupal_project_dir }}"
+    creates: "{{ web_root }}/drupal"
+  environment:
+    COMPOSER_MEMORY_LIMIT: -1
 
 - name: Quick start Drupal site (Umami demo)
   shell: php -d memory_limit=256M web/core/scripts/drupal quick-start demo_umami
