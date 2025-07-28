@@ -36,7 +36,7 @@
     path: "{{ drupal_project_dir }}/composer.json"
   register: drupal_project_check
 
-- name: Set fact: drupal_installed
+- name: Set fact drupal_installed
   set_fact:
     drupal_installed: "{{ drupal_project_check.stat.exists }}"
 
