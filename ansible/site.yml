@@ -1,13 +1,13 @@
 ---
 - name: Apply common base configuration to all servers
   hosts: all
-  become: true
+  become: yes
   roles:
     - common
      
 - name: Set up web environment
   hosts: app
-  become: true
+  become: yes
   roles:
     - php
     - apache
