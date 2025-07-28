@@ -1,37 +1,11 @@
 # group_vars/all.yml
 
 php_version: "8.1"
-php_packages:
-  - php{{ php_version }}
-  - php{{ php_version }}-cli
-  - php{{ php_version }}-common
-  - php{{ php_version }}-mysql
-  - php{{ php_version }}-xml
-  - php{{ php_version }}-gd
-  - php{{ php_version }}-mbstring
-  - libapache2-mod-php{{ php_version }}
-  - php{{ php_version }}-curl
-  - php{{ php_version }}-zip
-state: present
-update_cache: yes  
-  
-php_version: "8.1"  # or auto-generate if needed
-php_packages:
-  - php
-  - php-cli
-  - php-common
-  - php-mysql
-  - php-xml
-  - php-gd
-  - php-mbstring
-  - libapache2-mod-php
-  - php-curl
-  - php-zip
-state: present
-update_cache: yes
-#load_balancer_dns: drupal-app-alb-1234587071.us-east-1.elb.amazonaws.com
+web_root: "/var/www/drupal"
+drupal_project_dir: "/var/www/drupal/drupal"
 
-drupal_root: "/var/www/html"
+
+#drupal_root: "/var/www/html"
 rds_endpoint: drupal-app-db.c3eewgrpysg2.us-east-1.rds.amazonaws.com -P 3306
 drupal_db_host: "{{ rds_endpoint }}"
 drupal_db_name: "drupaldb"
