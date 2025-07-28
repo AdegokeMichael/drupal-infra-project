@@ -8,7 +8,7 @@
     mode: '0755'
 
 - name: Download Drupal using Composer
-  shell: composer create-project --no-interaction --prefer-dist drupal/recommended-project .
+  shell: composer create-project --no-interaction --prefer-dist drupal/recommended-project/drupal
   args:
     chdir: "{{ web_root }}"
     creates: "{{ web_root }}/drupal"
