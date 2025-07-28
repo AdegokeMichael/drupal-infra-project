@@ -1,0 +1,24 @@
+---
+- name: Ensure Apache modules for reverse proxy support are enabled (Debian-based)
+  ansible.builtin.command: a2enmod headers
+  notify: Restart Apache
+  when: ansible_os_family == "Debian"
+
+- name: Add reverse proxy config to Drupal .htaccess
+  ansible.builtin.lineinfile:
+    path: /var/www/html/web/.htaccess
+    insertafter: 'RewriteEngine on'
+    line: '  SetEnvIf X-Forwarded-Proto https HTTPS=on'
+    state: present
+
+- name: Add trusted host patterns to Drupal settings
+  ansible.builtin.blockinfile:
+    path: /var/www/html/web/sites/default/settings.php
+    marker: "# {mark} ANSIBLE MANAGED ALB CONFIG"
+    block: |
+      $settings['trusted_host_patterns'] = [
+        '^{{ alb_dns_name }}$',
+      ];
+      $settings['reverse_proxy'] = TRUE;
+      $settings['reverse_proxy_addresses'] = [$_SERVER['REMOTE_ADDR']];
+  when: alb_dns_name is defined
