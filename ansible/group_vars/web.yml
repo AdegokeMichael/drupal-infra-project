@@ -1,7 +1,7 @@
 
 
 # Drupal Configuration
-drupal_root: /var/www/html
+drupal_root: /var/www/html/
 drupal_site_name: "MyDrupalSite"
 drupal_admin_user: "admin"
 drupal_admin_pass: "strongpassword"
