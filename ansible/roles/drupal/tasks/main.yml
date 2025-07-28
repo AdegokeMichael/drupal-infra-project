@@ -71,6 +71,7 @@
 - name: Install Drush for admin user
   become: true
   become_user: admin
+  become_method: su
   import_tasks: install_drush.yml
 
 - name: Install Drupal site
