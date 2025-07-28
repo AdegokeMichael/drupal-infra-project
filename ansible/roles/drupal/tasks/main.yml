@@ -68,22 +68,33 @@
     group: www-data
     mode: '0755'
 
-- name: Install Drush for admin user
-  become: true
-  become_user: admin
-  become_method: su
-  import_tasks: install_drush.yml
+#- name: Install Drush for admin user
+#  become: true
+ # become_user: admin
+ # become_method: su
+ # import_tasks: install_drush.yml
 
-- name: Install Drupal site
-  import_tasks: install.yml
+# - name: Install Drupal site
+ # import_tasks: install.yml
+#- name: Install Drush globally
+ # command: composer global require drush/drush
+  #environment:
+   # PATH: "{{ ansible_env.HOME }}/.config/composer/vendor/bin:{{ ansible_env.PATH }}"
 
-#- name: Quick start Drupal site (e.g. Umami demo)
- # shell: >
-  #  php -d memory_limit=256M core/scripts/drupal quick-start {{ drupal_site_name }}
-  #args:
-  #  chdir: "{{ drupal_project_dir }}/web"
-   # creates: "{{ drupal_project_dir }}/web/sites/default/settings.php"
-  #when: drupal_site_name | length > 0 and not drupal_installed
+- name: Install Drush globally (system-wide)
+  command: >
+    composer require drush/drush --working-dir=/usr/local/bin
+  args:
+    creates: /usr/local/bin/vendor/bin/drush  # Skip if already installed
+  become: yes
+
+- name: Quick start Drupal site (e.g. Umami demo)
+  shell: >
+   php -d memory_limit=256M core/scripts/drupal quick-start {{ drupal_site_name }}
+  args:
+    chdir: "{{ drupal_project_dir }}/web"
+    creates: "{{ drupal_project_dir }}/web/sites/default/settings.php"
+  when: drupal_site_name | length > 0 and not drupal_installed
 
 - import_tasks: db_config.yml
   when: drupal_installed
