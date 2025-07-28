@@ -1,12 +1,15 @@
 ---
-- name: Ensure Drupal files directory exists
-  ansible.builtin.file:
-    path: /var/www/html/sites/default/files
-    state: directory
-    owner: www-data
-    group: www-data
-    mode: '0775'
-    recurse: yes
+- name: Install rsync
+  apt:
+    name: rsync
+    state: present
+
+- name: Sync files from primary node (run on secondary nodes only)
+  command: >
+    rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no"
+    ubuntu@PRIMARY_NODE_IP:{{ drupal_project_dir }}/web/sites/default/files/
+    {{ drupal_project_dir }}/web/sites/default/files/
+  when: inventory_hostname != 'appserver1'
 
 #- name: Step 1 - Copy files from app-server-1 to bastion (local)
  # delegate_to: localhost
@@ -28,14 +31,5 @@
 
     
 
-- name: Sync Drupal files directory from master node (optional)
-  ansible.posix.synchronize:
-    src: /var/www/html/sites/default/files/
-    dest: /var/www/html/sites/default/files/
-    recursive: yes
-    delete: no
-    rsync_opts:
-      - "--exclude=*.tmp"
-  delegate_to: "{{ groups['web'][0] }}"
 
 
