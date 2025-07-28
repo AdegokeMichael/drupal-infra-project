@@ -4,9 +4,9 @@
     update_cache: yes
     cache_valid_time: 3600
 
-- name: Upgrade non-PHP packages (safe mode )
-  apt:
-    upgrade: safe
+#- name: Upgrade non-PHP packages (safe mode )
+ # apt:
+  #  upgrade: safe
  # notify: Reboot if required
 
 - name: Set timezone
@@ -18,7 +18,7 @@
     name: "{{ common_packages }}"
     state: present
 
-- name: Ensure deploy user exists
+- name: Ensure Deploy user exists
   user:
     name: "{{ create_user }}"
     shell: /bin/bash
