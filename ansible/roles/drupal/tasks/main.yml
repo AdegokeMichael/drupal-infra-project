@@ -31,6 +31,15 @@
     group: www-data
     mode: '0755'
 
+- name: Check if Drupal already installed
+  stat:
+    path: "{{ drupal_project_dir }}/composer.json"
+  register: drupal_project_check
+
+- name: Set fact: drupal_installed
+  set_fact:
+    drupal_installed: "{{ drupal_project_check.stat.exists }}"
+
 - name: Download Drupal using Composer
   command: >
     {{ composer_path }} create-project {{ composer_project }} {{ drupal_project_dir }}
@@ -41,6 +50,7 @@
   register: drupal_composer_result
   changed_when: "'Installing drupal/core' in drupal_composer_result.stdout"
   failed_when: drupal_composer_result.rc != 0
+  when: not drupal_installed
 
 - name: Verify Drupal installation directory exists
   stat:
@@ -58,6 +68,7 @@
   args:
     chdir: "{{ drupal_project_dir }}/web"
     creates: "{{ drupal_project_dir }}/web/sites/default/settings.php"
-  when: drupal_site_name | length > 0
+  when: drupal_site_name | length > 0 and not drupal_installed
 
 - import_tasks: db_config.yml
+  when: drupal_installed
