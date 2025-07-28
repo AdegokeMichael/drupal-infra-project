@@ -1,13 +1,16 @@
 - name: Install Drupal site using RDS database
   ansible.builtin.shell: |
-    drush site:install standard \
-      --db-url=mysql://{{ drupal_db_user }}:{{ drupal_db_passw }}@{{ drupal_db_host }}:{{ drupal_db_port }}/{{ drupal_db_name }} \
+    /usr/local/bin/drush site:install standard \
+      --db-url=mysql://{{ drupal_db_user }}:{{ drupal_db_pass }}@{{ drupal_db_host }}:{{ drupal_db_port }}/{{ drupal_db_name }} \
       --site-name="{{ drupal_site_name }}" \
       --account-name={{ drupal_admin_user }} \
       --account-pass={{ drupal_admin_pass }} \
       --yes
   args:
     chdir: /var/www/html/drupal
+    creates: /var/www/html/drupal/sites/default/settings.php
   register: drupal_install
+  environment:
+    PATH: "/usr/local/bin:{{ ansible_env.PATH }}"
   changed_when: "'Installation complete' in drupal_install.stdout"
-  failed_when: "'ERROR' in drupal_install.stderr"
+  failed_when: "'ERROR' in drupal_install.stderr or 'Command site:install was not found' in drupal_install.stderr"
