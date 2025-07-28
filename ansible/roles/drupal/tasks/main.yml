@@ -60,9 +60,17 @@
   failed_when: not post_install_check.stat.exists
   when: not drupal_installed
   
-- name: Install Drush globally
-  import_tasks: install_drush.yml
-  tags: drush
+- name: Ensure Drupal directory exists
+  ansible.builtin.file:
+    path: /var/www/html/drupal
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+
+- import_tasks: install_drush.yml
+- import_tasks: install.yml  
+
 
 #- name: Quick start Drupal site (e.g. Umami demo)
  # shell: >
