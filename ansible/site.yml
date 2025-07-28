@@ -15,3 +15,4 @@
     - drupal
     - filesync
     - harden
+    - loadbalancer
