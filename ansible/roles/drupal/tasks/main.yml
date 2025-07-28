@@ -68,7 +68,11 @@
     group: www-data
     mode: '0755'
 
-- import_tasks: install_drush.yml
+- Install Drush for admin user
+  become: true
+  become_user: admin
+  import_tasks: install_drush.yml
+
 - import_tasks: install.yml  
 
 
