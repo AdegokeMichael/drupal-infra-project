@@ -1,4 +1,14 @@
 ---
+- name: Ensure Composer is installed
+  stat:
+    path: "{{ composer_path }}"
+  register: composer_check
+
+- name: Fail if Composer is not installed
+  fail:
+    msg: "Composer not found at {{ composer_path }}. Please install Composer before running this role."
+  when: not composer_check.stat.exists
+
 - name: Ensure web root directory exists
   file:
     path: "{{ web_root }}"
@@ -11,7 +21,7 @@
   file:
     path: "{{ drupal_project_dir }}"
     state: absent
-  when: force_redeploy | default(false)
+  when: force_redeploy
 
 - name: Create Drupal project directory
   file:
@@ -22,19 +32,20 @@
     mode: '0755'
 
 - name: Download Drupal using Composer
-  command: composer create-project drupal/recommended-project "{{ drupal_project_dir }}"
+  command: >
+    {{ composer_path }} create-project {{ composer_project }} {{ drupal_project_dir }}
   args:
     chdir: "{{ web_root }}"
     creates: "{{ drupal_project_dir }}/composer.json"
   environment:
     COMPOSER_ALLOW_SUPERUSER: "1"
 
-- name: Quick start Drupal site (Umami demo)
+- name: Quick start Drupal site (e.g. Umami demo)
   shell: >
     php -d memory_limit=256M core/scripts/drupal quick-start {{ drupal_site_name }}
   args:
     chdir: "{{ drupal_project_dir }}/web"
     creates: "{{ drupal_project_dir }}/web/sites/default/settings.php"
-  when: drupal_site_name is defined
+  when: drupal_site_name | length > 0
 
 - import_tasks: db_config.yml
