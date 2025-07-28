@@ -1,8 +1,9 @@
 # group_vars/all.yml
 
 php_version: "8.1"
-drupal_project_dir: "/var/www/html/drupal"
 web_root: "/var/www/html/"
+drupal_project_dir: "{{ web_root }}/drupal"
+drupal_site_name: demo_umami
 
 
 
