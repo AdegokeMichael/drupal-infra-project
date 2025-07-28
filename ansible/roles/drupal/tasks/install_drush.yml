@@ -1,0 +1,24 @@
+- name: Ensure Composer global bin directory exists in PATH
+  lineinfile:
+    path: ~/.bashrc
+    line: 'export PATH="$HOME/.config/composer/vendor/bin:$PATH"'
+    insertafter: EOF
+  become: false
+  shell: echo 'export PATH="$HOME/.config/composer/vendor/bin:$PATH"' >> ~/.bashrc
+  when: ansible_user != 'root'
+
+- name: Install Drush globally using Composer
+  become: false
+  shell: composer global require drush/drush --no-interaction
+  environment:
+    COMPOSER_HOME: "{{ ansible_env.HOME }}/.config/composer"
+  args:
+    creates: "{{ ansible_env.HOME }}/.config/composer/vendor/bin/drush"
+
+- name: Symlink Drush to /usr/local/bin for global access
+  become: yes
+  file:
+    src: "{{ ansible_env.HOME }}/.config/composer/vendor/bin/drush"
+    dest: /usr/local/bin/drush
+    state: link
+    force: yes
