@@ -81,12 +81,12 @@
   #environment:
    # PATH: "{{ ansible_env.HOME }}/.config/composer/vendor/bin:{{ ansible_env.PATH }}"
 
-- name: Install Drush globally (system-wide)
-  command: >
-    composer require drush/drush --working-dir=/usr/local/bin
-  args:
-    creates: /usr/local/bin/vendor/bin/drush  # Skip if already installed
-  become: yes
+#- name: Install Drush globally (system-wide)
+ # command: >
+  #  composer require drush/drush --working-dir=/usr/local/bin
+  #args:
+   # creates: /usr/local/bin/vendor/bin/drush  # Skip if already installed
+  #become: yes
 
 - name: Quick start Drupal site (e.g. Umami demo)
   shell: >
