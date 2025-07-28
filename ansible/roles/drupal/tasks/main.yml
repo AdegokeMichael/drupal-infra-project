@@ -22,6 +22,10 @@
     path: "{{ drupal_project_dir }}"
     state: absent
   when: drupal_project_dir is defined
+- name: Verify Drupal installation directory exists
+  stat:
+    path: "{{ drupal_project_dir }}/web"
+  register: drupal_web_dir  
 
 - name: Create Drupal project directory
   file:
@@ -35,12 +39,12 @@
   stat:
     path: "{{ drupal_project_dir }}/composer.json"
   register: drupal_project_check
+- name: Set fact if Drupal is installed
+  set_fact:
+    drupal_installed: true
+  when: drupal_web_dir.stat.exists
 
 
-- name: Verify Drupal installation directory exists
-  stat:
-    path: "{{ drupal_project_dir }}/web"
-  register: drupal_web_dir
 
 #- name: Install Drupal using Composer
  # command: composer create-project drupal/recommended-project "{{ drupal_project_dir }}"
@@ -61,11 +65,6 @@
   changed_when: "'Installing drupal/core' in drupal_composer_result.stdout"
   failed_when: drupal_composer_result.rc != 0
   when: not drupal_installed  
-
-- name: Set fact if Drupal is installed
-  set_fact:
-    drupal_installed: true
-  when: drupal_web_dir.stat.exists
 
 - name: Fail if Drupal installation failed
   fail:
