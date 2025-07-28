@@ -1,5 +1,5 @@
 ---
-- name: Create web root directory
+- name: Ensure web root directory exists
   file:
     path: "{{ web_root }}"
     state: directory
@@ -10,8 +10,8 @@
 - name: Remove existing Drupal directory (if re-provisioning)
   file:
     path: "{{ drupal_project_dir }}"
-    state: absent    
-    
+    state: absent
+  when: force_redeploy | default(false)
 
 - name: Create Drupal project directory
   file:
@@ -22,24 +22,19 @@
     mode: '0755'
 
 - name: Download Drupal using Composer
-  ansible.builtin.command:
-    cmd: "composer create-project drupal/recommended-project {{ drupal_project_dir }}"
+  command: composer create-project drupal/recommended-project "{{ drupal_project_dir }}"
   args:
-    chdir: "/var/www/html"
-    creates: "{{ drupal_project_dir }}/composer.json"    
-
-#- name: Download Drupal using Composer
- # shell: >
-  #  COMPOSER_ALLOW_SUPERUSER=1
-   # composer create-project --no-interaction --prefer-dist drupal/recommended-project "{{ drupal_project_dir }}"
-  #args:
-   # creates: "{{ drupal_project_dir }}"
+    chdir: "{{ web_root }}"
+    creates: "{{ drupal_project_dir }}/composer.json"
+  environment:
+    COMPOSER_ALLOW_SUPERUSER: "1"
 
 - name: Quick start Drupal site (Umami demo)
   shell: >
-    php -d memory_limit=256M web/core/scripts/drupal quick-start demo_umami
+    php -d memory_limit=256M core/scripts/drupal quick-start {{ drupal_site_name }}
   args:
     chdir: "{{ drupal_project_dir }}/web"
     creates: "{{ drupal_project_dir }}/web/sites/default/settings.php"
+  when: drupal_site_name is defined
 
 - import_tasks: db_config.yml
