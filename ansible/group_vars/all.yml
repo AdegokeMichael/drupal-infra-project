@@ -2,7 +2,7 @@
 
 php_version: "8.1"
 web_root: "/var/www/html/"
-drupal_project_dir: "{{ web_root }}/drupal"
+drupal_project_dir: "{{ web_root }}drupal"
 drupal_site_name: demo_umami
 
 
