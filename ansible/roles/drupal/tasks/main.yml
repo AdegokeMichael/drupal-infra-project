@@ -8,10 +8,11 @@
     mode: '0755'
 
 - name: Download Drupal using Composer
-  shell: composer create-project --no-interaction --prefer-dist drupal/recommended-project .
+  shell: >
+    COMPOSER_ALLOW_SUPERUSER=1 composer create-project --no-interaction --prefer-dist drupal/recommended-project {{ drupal_project_dir }}
   args:
+    creates: "{{ drupal_project_dir }}/web"
     chdir: "{{ web_root }}"
-    creates: "{{ web_root }}/web"
 
 - name: Quick start Drupal site (Umami demo)
   shell: php -d memory_limit=256M web/core/scripts/drupal quick-start demo_umami
