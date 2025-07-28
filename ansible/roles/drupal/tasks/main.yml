@@ -36,9 +36,21 @@
     {{ composer_path }} create-project {{ composer_project }} {{ drupal_project_dir }}
   args:
     chdir: "{{ web_root }}"
-    creates: "{{ drupal_project_dir }}/composer.json"
   environment:
     COMPOSER_ALLOW_SUPERUSER: "1"
+  register: drupal_composer_result
+  changed_when: "'Installing drupal/core' in drupal_composer_result.stdout"
+  failed_when: drupal_composer_result.rc != 0
+
+- name: Verify Drupal installation directory exists
+  stat:
+    path: "{{ drupal_project_dir }}/web"
+  register: drupal_web_dir
+
+- name: Fail if Drupal installation failed
+  fail:
+    msg: "Composer did not create the expected Drupal directory '{{ drupal_project_dir }}/web'."
+  when: not drupal_web_dir.stat.exists  
 
 - name: Quick start Drupal site (e.g. Umami demo)
   shell: >
