@@ -39,7 +39,21 @@
 - name: Set fact drupal_installed
   set_fact:
     drupal_installed: "{{ drupal_project_check.stat.exists }}"
+    
+- name: Verify Drupal installation directory exists
+  stat:
+    path: "{{ drupal_project_dir }}/web"
+  register: drupal_web_dir
 
+- name: Set fact if Drupal is installed
+  set_fact:
+    drupal_installed: true
+  when: drupal_web_dir.stat.exists
+
+- name: Fail if Drupal installation failed
+  fail:
+    msg: "Composer did not create the expected Drupal directory '{{ drupal_project_dir }}/web'."
+  when: not drupal_web_dir.stat.exists
 - name: Download Drupal using Composer
   command: >
     {{ composer_path }} create-project {{ composer_project }} {{ drupal_project_dir }}
