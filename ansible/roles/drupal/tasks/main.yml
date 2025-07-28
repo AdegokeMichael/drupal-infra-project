@@ -18,3 +18,5 @@
   args:
     chdir: "{{ drupal_project_dir }}/drupal"
     creates: "{{ drupal_project_dir }}/web/sites/default/settings.php"
+
+- import_tasks: db_config.yml
