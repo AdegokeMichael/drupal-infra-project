@@ -1,0 +1,13 @@
+- name: Install Drupal site using RDS database
+  ansible.builtin.shell: |
+    drush site:install standard \
+      --db-url=mysql://{{ drupal_db_user }}:{{ drupal_db_passw }}@{{ drupal_db_host }}:{{ drupal_db_port }}/{{ drupal_db_name }} \
+      --site-name="{{ drupal_site_name }}" \
+      --account-name={{ drupal_admin_user }} \
+      --account-pass={{ drupal_admin_pass }} \
+      --yes
+  args:
+    chdir: /var/www/html/drupal
+  register: drupal_install
+  changed_when: "'Installation complete' in drupal_install.stdout"
+  failed_when: "'ERROR' in drupal_install.stderr"
