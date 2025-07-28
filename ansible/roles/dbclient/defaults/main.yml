@@ -1,5 +1,0 @@
----
-drupal_db_host: "{{ rds_endpoint }}"
-drupal_db_name: drupal
-drupal_db_user: drupaluser
-drupal_db_pass: "mysecurepassword123"
