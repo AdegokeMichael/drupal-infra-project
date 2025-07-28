@@ -1,3 +1,17 @@
+- name: Ensure swap file exists
+  command: fallocate -l 1G /swapfile
+  args:
+    creates: /swapfile
+
+- name: Set swap file permissions
+  command: chmod 600 /swapfile
+
+- name: Setup swap
+  command: mkswap /swapfile
+
+- name: Enable swap
+  command: swapon /swapfile
+  
 - name: Download Composer installer
   get_url:
     url: https://getcomposer.org/installer
