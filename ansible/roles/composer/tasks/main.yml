@@ -1,17 +1,26 @@
+- name: Check if swap is already mounted
+  command: swapon --show
+  register: swap_status
+  changed_when: false
+
 - name: Ensure swap file exists
   command: fallocate -l 1G /swapfile
   args:
     creates: /swapfile
+  when: swap_status.stdout == ""
 
 - name: Set swap file permissions
   command: chmod 600 /swapfile
+  when: swap_status.stdout == ""
 
 - name: Setup swap
   command: mkswap /swapfile
+  when: swap_status.stdout == ""
 
 - name: Enable swap
   command: swapon /swapfile
-  
+  when: swap_status.stdout == ""
+
 - name: Download Composer installer
   get_url:
     url: https://getcomposer.org/installer
@@ -21,4 +30,3 @@
   shell: php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
   args:
     creates: /usr/local/bin/composer
-
