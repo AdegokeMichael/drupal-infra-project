@@ -16,7 +16,7 @@
 - name: Quick start Drupal site (Umami demo)
   shell: php -d memory_limit=256M web/core/scripts/drupal quick-start demo_umami
   args:
-    chdir: "{{ drupal_project_dir }}/drupal"
+    chdir: "{{ drupal_project_dir }}"
     creates: "{{ drupal_project_dir }}/web/sites/default/settings.php"
 
 - import_tasks: db_config.yml
