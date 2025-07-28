@@ -1,11 +1,16 @@
-- name: Ensure Composer global bin directory exists in PATH
+- name: Ensure .bashrc exists for current user
+  file:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    state: touch
   become: false
-  ansible.builtin.lineinfile:
+
+- name: Ensure Composer global bin directory exists in PATH
+  lineinfile:
     path: "{{ ansible_env.HOME }}/.bashrc"
     line: 'export PATH="$HOME/.config/composer/vendor/bin:$PATH"'
     insertafter: EOF
     state: present
-  when: ansible_user != 'root'
+  become: false
 
 - name: Install Drush globally using Composer
   become: false
