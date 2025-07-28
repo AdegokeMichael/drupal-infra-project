@@ -1,32 +1,52 @@
-version: "3.8"
+version: '3.8'
 
 services:
   drupal:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    build: .
     ports:
       - "8080:80"
     volumes:
-      - ./drupal:/var/www/html
+      - ./modules:/var/www/html/modules
+      - ./themes:/var/www/html/themes
+      - ./sites:/var/www/html/sites
+    environment:
+      - DRUPAL_DATABASE_HOST=db
+      - DRUPAL_DATABASE_NAME=drupal
+      - DRUPAL_DATABASE_USER=drupal
+      - DRUPAL_DATABASE_PASSWORD=drupal
     depends_on:
       - db
-    environment:
-      - DB_HOST=db
-      - DB_NAME=drupaldb
-      - DB_USER=drupal
-      - DB_PASSWORD=drupalpass
+    networks:
+      - drupal-network
 
   db:
-    image: mariadb:10.5
-    restart: always
+    image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: drupaldb
-      MYSQL_USER: drupal
-      MYSQL_PASSWORD: drupalpass
+      - MYSQL_DATABASE=drupal
+      - MYSQL_USER=drupal
+      - MYSQL_PASSWORD=drupal
+      - MYSQL_ROOT_PASSWORD=rootpassword
     volumes:
       - db_data:/var/lib/mysql
+    networks:
+      - drupal-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      - PMA_HOST=db
+      - PMA_USER=drupal
+      - PMA_PASSWORD=drupal
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+    networks:
+      - drupal-network
 
 volumes:
   db_data:
+
+networks:
+  drupal-network:
+    driver: bridge
