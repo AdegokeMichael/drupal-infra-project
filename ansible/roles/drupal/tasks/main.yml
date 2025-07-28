@@ -68,13 +68,13 @@
     group: www-data
     mode: '0755'
 
-- Install Drush for admin user
+- name: Install Drush for admin user
   become: true
   become_user: admin
   import_tasks: install_drush.yml
 
-- import_tasks: install.yml  
-
+- name: Install Drupal site
+  import_tasks: install.yml
 
 #- name: Quick start Drupal site (e.g. Umami demo)
  # shell: >
