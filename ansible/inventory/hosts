@@ -1,9 +1,9 @@
 [app]
-app-server-1 ansible_host=10.1.3.12 ansible_user=admin
-app-server-2 ansible_host=10.1.4.94 ansible_user=admin
+app-server-1 ansible_host=10.1.3.12 
+app-server-2 ansible_host=10.1.4.94
 
 [app:vars]
-ansible_user=admin
+ansible_user=aubuntu
 ansible_ssh_private_key_file=/home/ubuntu/drupalkey.pem
 drupal_project_dir=/var/www/html/drupal
 alb_dns_name=drupal-app-alb-407123160.us-east-1.elb.amazonaws.com 
