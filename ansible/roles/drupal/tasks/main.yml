@@ -36,39 +36,20 @@
     path: "{{ drupal_project_dir }}/composer.json"
   register: drupal_project_check
 
-- name: Set fact drupal_installed
-  set_fact:
-    drupal_installed: "{{ drupal_project_check.stat.exists }}"
 
 - name: Verify Drupal installation directory exists
   stat:
     path: "{{ drupal_project_dir }}/web"
   register: drupal_web_dir
 
-- name: Set fact if Drupal is installed
-  set_fact:
-    drupal_installed: true
-  when: drupal_web_dir.stat.exists
+#- name: Install Drupal using Composer
+ # command: composer create-project drupal/recommended-project "{{ drupal_project_dir }}"
+ # args:
+ #   chdir: /var/www/html
+ # become: true
+ # become_user: www-data
+ # creates: "{{ drupal_project_dir }}/web"
 
-- name: Fail if Drupal installation failed
-  fail:
-    msg: "Composer did not create the expected Drupal directory '{{ drupal_project_dir }}/web'."
-  when: not drupal_web_dir.stat.exists    
-    
-- name: Verify Drupal installation directory exists
-  stat:
-    path: "{{ drupal_project_dir }}/web"
-  register: drupal_web_dir
-
-- name: Set fact if Drupal is installed
-  set_fact:
-    drupal_installed: true
-  when: drupal_web_dir.stat.exists
-
-- name: Fail if Drupal installation failed
-  fail:
-    msg: "Composer did not create the expected Drupal directory '{{ drupal_project_dir }}/web'."
-  when: not drupal_web_dir.stat.exists
 - name: Download Drupal using Composer
   command: >
     {{ composer_path }} create-project {{ composer_project }} {{ drupal_project_dir }}
@@ -79,17 +60,17 @@
   register: drupal_composer_result
   changed_when: "'Installing drupal/core' in drupal_composer_result.stdout"
   failed_when: drupal_composer_result.rc != 0
-  when: not drupal_installed
+  when: not drupal_installed  
 
-- name: Verify Drupal installation directory exists
-  stat:
-    path: "{{ drupal_project_dir }}/web"
-  register: drupal_web_dir
+- name: Set fact if Drupal is installed
+  set_fact:
+    drupal_installed: true
+  when: drupal_web_dir.stat.exists
 
 - name: Fail if Drupal installation failed
   fail:
     msg: "Composer did not create the expected Drupal directory '{{ drupal_project_dir }}/web'."
-  when: not drupal_web_dir.stat.exists  
+  when: not drupal_web_dir.stat.exists      
 
 - name: Quick start Drupal site (e.g. Umami demo)
   shell: >
