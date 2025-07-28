@@ -39,11 +39,9 @@
   stat:
     path: "{{ drupal_project_dir }}/composer.json"
   register: drupal_project_check
-- name: Set fact if Drupal is installed
+- name: Set drupal_installed fact based on Drupal installation
   set_fact:
-    drupal_installed: true
-  when: drupal_web_dir.stat.exists
-
+    drupal_installed: "{{ drupal_web_dir.stat.exists }}"
 
 
 #- name: Install Drupal using Composer
