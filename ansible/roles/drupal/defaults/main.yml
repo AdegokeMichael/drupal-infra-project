@@ -1,0 +1,6 @@
+web_root: /var/www/html
+drupal_project_dir: "{{ web_root }}/drupal"
+drupal_site_name: demo_umami  # Set to false or "" to skip
+force_redeploy: false
+composer_project: "drupal/recommended-project"
+composer_path: "/usr/local/bin/composer"
