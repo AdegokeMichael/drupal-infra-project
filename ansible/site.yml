@@ -6,9 +6,12 @@
     - common
      
 - name: Set up web environment
-  hosts: web
+  hosts: app
   become: true
   roles:
+    - php
+    - apache
+    - composer
     - web
     - dbclient
     - drupal
