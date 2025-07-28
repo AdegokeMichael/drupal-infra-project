@@ -21,7 +21,7 @@
   file:
     path: "{{ drupal_project_dir }}"
     state: absent
-  when: force_redeploy
+  when: drupal_project_dir is defined
 
 - name: Create Drupal project directory
   file:
