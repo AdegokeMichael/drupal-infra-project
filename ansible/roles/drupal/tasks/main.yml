@@ -1,80 +1,20 @@
-- name: Add PHP repository
-  apt_repository:
-    repo: ppa:ondrej/php
-    state: present
-
-- name: Ensure required packages are installed
-  apt:
-    name:
-    state: present
-    update_cache: yes
-  loop:  
-      - curl
-      - unzip
-      - php8.1
-      - php8.1-mysql
-      - php8.1-gd
-      - php8.1-xml
-      - php8.1-mbstring
-      - php8.1-curl
-      - php8.1-zip
-      - php8.1-bcmath
-      - php8.1-opcache
-      - libapache2-mod-php8.1
-      - apache2
-
-      
-- name: Disable other PHP versions
-  shell: a2dismod php7.* php8.4 php8.0 php || true
-
-- name: Enable PHP 8.1
-  shell: a2enmod php8.1    
-  
-
-- name: Ensure Composer is installed globally
-  get_url:
-    url: https://getcomposer.org/installer
-    dest: /tmp/composer-setup.php
-
-- name: Run Composer installer
-  command: php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
-  args:
-    creates: /usr/local/bin/composer
-
-- name: Clean web root if exists
+---
+- name: Create web root directory
   file:
-    path: /var/www/html
-    state: absent
-
-- name: Recreate web root directory
-  file:
-    path: /var/www/html
+    path: "{{ web_root }}"
     state: directory
     owner: www-data
     group: www-data
     mode: '0755'
 
-- name: Create new Drupal project with Composer
-  command: composer create-project drupal/recommended-project /var/www/html
+- name: Download Drupal using Composer
+  shell: composer create-project drupal/recommended-project drupal
   args:
-    creates: /var/www/html/composer.json
+    chdir: "{{ web_root }}"
+    creates: "{{ drupal_project_dir }}"
 
-- name: Configure Apache virtual host for Drupal
-  template:
-    src: drupal.conf.j2
-    dest: /etc/apache2/sites-available/drupal.conf
-  notify:
-    - Reload Apache
-
-- name: Enable Drupal site and disable default
-  shell: |
-    a2dissite 000-default.conf || true
-    a2ensite drupal.conf
-  notify:
-    - Reload Apache
-
-
-- name: Restart Apache
-  service:
-    name: apache2
-    state: restarted
+- name: Quick start Drupal site (Umami demo)
+  shell: php -d memory_limit=256M web/core/scripts/drupal quick-start demo_umami
+  args:
+    chdir: "{{ drupal_project_dir }}"
+    creates: "{{ drupal_project_dir }}/web/sites/default/settings.php"
