@@ -1,0 +1,21 @@
+- name: Add PHP repository
+  apt_repository:
+    repo: ppa:ondrej/php
+    state: present
+
+- name: Install PHP and extensions
+  apt:
+    name:
+      - php{{ php_version }}
+      - php{{ php_version }}-cli
+      - php{{ php_version }}-mysql
+      - php{{ php_version }}-gd
+      - php{{ php_version }}-xml
+      - php{{ php_version }}-mbstring
+      - php{{ php_version }}-curl
+      - php{{ php_version }}-zip
+      - php{{ php_version }}-bcmath
+      - libapache2-mod-php{{ php_version }}
+    state: present
+    update_cache: yes
+
