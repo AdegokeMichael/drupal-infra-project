@@ -1,9 +1,7 @@
 <VirtualHost *:80>
-    ServerAdmin webmaster@localhost
-    DocumentRoot /var/www/html
+    DocumentRoot "{{ drupal_project_dir }}/web"
 
-    <Directory /var/www/html>
-        Options Indexes FollowSymLinks
+    <Directory "{{ drupal_project_dir }}/web">
         AllowOverride All
         Require all granted
     </Directory>
@@ -11,4 +9,5 @@
     ErrorLog ${APACHE_LOG_DIR}/drupal_error.log
     CustomLog ${APACHE_LOG_DIR}/drupal_access.log combined
 </VirtualHost>
+
 
