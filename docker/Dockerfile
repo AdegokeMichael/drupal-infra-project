@@ -15,9 +15,6 @@ RUN apt-get update && apt-get install -y \
     && composer global require phpunit/phpunit \
     && ln -s /root/.composer/vendor/bin/phpunit /usr/local/bin/phpunit
 
-RUN composer install --no-dev  # For production
-# For testing (install dev dependencies, including PHPUnit):
-RUN composer install --dev
 # Install Drush (Drupal shell)
 RUN php -r "readfile('https://sites.drupal.org/files/drush.phar');" > drush \
     && chmod +x drush \
