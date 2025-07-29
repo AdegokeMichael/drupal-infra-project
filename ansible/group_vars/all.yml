@@ -6,6 +6,7 @@ drupal_project_dir: "{{ web_root }}/drupal"
 drupal_site_name: "demo_umami"
 drupal_admin_user: "admin"
 drupal_admin_pass: "Str0ngpassw0rdadm1n"
+alb_dns_name: "drupal-app-alb-1963346511.us-east-1.elb.amazonaws.com"
 
 
 
