@@ -178,7 +178,6 @@
 
 - name: Ensure mod_proxy_fcgi is enabled (for PHP-FPM)
   command: a2enmod proxy_fcgi
-  notify: restart apache
   when: php_fpm_install | default(true)  
 
 - import_tasks: db_config.yml
