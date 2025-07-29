@@ -37,7 +37,7 @@
             RewriteCond %{REQUEST_FILENAME} !-d
             RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
           </IfModule>
-        dest: "{{ drupal_web_root }}/.htaccess"
+        dest: "{{ web_root }}/.htaccess"
         owner: www-data
         group: www-data
         mode: '0644'
