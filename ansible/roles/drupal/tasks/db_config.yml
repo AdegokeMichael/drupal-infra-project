@@ -15,7 +15,7 @@
       $databases['default']['default'] = array (
         'database' => '{{ drupal_db_name }}',
         'username' => '{{ drupal_db_user }}',
-        'password' => '{{ drupal_db_password }}',
+        'password' => '{{ drupal_db_pass }}',
         'host' => '{{ drupal_db_host }}',
         'driver' => 'mysql',
         'port' => '3306',
