@@ -48,6 +48,7 @@
     chdir: "{{ web_root }}"
   environment:
     COMPOSER_ALLOW_SUPERUSER: "1"
+    COMPOSER_MEMORY_LIMIT: "1G"
   register: drupal_composer_result
   changed_when: "'Installing drupal/core' in drupal_composer_result.stdout"
   failed_when: drupal_composer_result.rc != 0
@@ -89,10 +90,11 @@
   #become: yes
 
 - name: Quick start Drupal site (e.g. Umami demo)
-  shell: >
+  command: >
    php -d memory_limit=1024M core/scripts/drupal quick-start {{ drupal_site_name }}
   args:
     chdir: "{{ drupal_project_dir }}/web"
+    timeout: 1800
     creates: "{{ drupal_project_dir }}/web/sites/default/settings.php"
   when: drupal_site_name | length > 0 and not drupal_installed
 
