@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drupal
+  namespace: drupal-prod
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: drupal
+  template:
+    metadata:
+      labels:
+        app: drupal
+    spec:
+      containers:
+      - name: drupal
+        image: placeholder  # Will be replaced by GitHub Actions
+        ports:
+        - containerPort: 80
+        env:
+        - name: DRUPAL_ENV
+          value: "prod"
