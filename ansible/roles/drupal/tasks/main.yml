@@ -90,7 +90,7 @@
 
 - name: Quick start Drupal site (e.g. Umami demo)
   shell: >
-   php -d memory_limit=256M core/scripts/drupal quick-start {{ drupal_site_name }}
+   php -d memory_limit=1024M core/scripts/drupal quick-start {{ drupal_site_name }}
   args:
     chdir: "{{ drupal_project_dir }}/web"
     creates: "{{ drupal_project_dir }}/web/sites/default/settings.php"
