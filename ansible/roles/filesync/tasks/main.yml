@@ -7,7 +7,7 @@
 - name: Sync files from primary node (run on secondary nodes only)
   command: >
     rsync -avz --delete -e "ssh -o StrictHostKeyChecking=no"
-    ubuntu@PRIMARY_NODE_IP:{{ drupal_project_dir }}/web/sites/default/files/
+    ubuntu@10.1.3.64:{{ drupal_project_dir }}/web/sites/default/files/
     {{ drupal_project_dir }}/web/sites/default/files/
   when: inventory_hostname != 'appserver1'
 
