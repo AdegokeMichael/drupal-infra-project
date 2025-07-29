@@ -18,6 +18,8 @@
       - php{{ php_version }}-opcache
       - libapache2-mod-php{{ php_version }}
       - php{{ php_version }}-sqlite3
+      - php{{ php_version }}-fpm
+      
     state: present
     update_cache: yes
 
