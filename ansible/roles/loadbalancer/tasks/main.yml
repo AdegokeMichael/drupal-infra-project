@@ -4,15 +4,31 @@
   notify: Restart Apache
   when: ansible_os_family == "Debian"
 
-- name: Ensure .htaccess exists before modification
+- name: Verify Drupal web directory exists
+  ansible.builtin.stat:
+    path: "{{ drupal_web_root }}"
+  register: web_dir
+  vars:
+    drupal_web_root: "{{ drupal_project_dir | default('/var/www/html') }}/web"
+
+- name: Create Drupal web directory if missing
+  ansible.builtin.file:
+    path: "{{ drupal_web_root }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: '0755'
+  when: not web_dir.stat.exists
+
+- name: Ensure .htaccess exists
   block:
-    - name: Check if .htaccess exists
-      stat:
-        path: /var/www/html/web/.htaccess
+    - name: Check for existing .htaccess
+      ansible.builtin.stat:
+        path: "{{ drupal_web_root }}/.htaccess"
       register: htaccess_file
 
-    - name: Create basic .htaccess if missing
-      copy:
+    - name: Create basic .htaccess
+      ansible.builtin.copy:
         content: |
           <IfModule mod_rewrite.c>
             RewriteEngine on
@@ -21,27 +37,25 @@
             RewriteCond %{REQUEST_FILENAME} !-d
             RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
           </IfModule>
-        dest: /var/www/html/web/.htaccess
+        dest: "{{ drupal_web_root }}/.htaccess"
         owner: www-data
         group: www-data
         mode: '0644'
       when: not htaccess_file.stat.exists
 
-  # Always runs after the block
-  always:
-    - name: Add reverse proxy settings
-      ansible.builtin.blockinfile:
-        path: /var/www/html/web/.htaccess
-        marker: "# {mark} ANSIBLE MANAGED LB CONFIG"
-        block: |
-          SetEnvIf X-Forwarded-Proto https HTTPS=on
-          RewriteCond %{HTTP:X-Forwarded-Proto} !https
-          RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-        insertafter: 'RewriteEngine on'
+- name: Add reverse proxy settings
+  ansible.builtin.blockinfile:
+    path: "{{ drupal_web_root }}/.htaccess"
+    marker: "# {mark} ANSIBLE MANAGED LB CONFIG"
+    block: |
+      SetEnvIf X-Forwarded-Proto https HTTPS=on
+      RewriteCond %{HTTP:X-Forwarded-Proto} !https
+      RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+    insertafter: 'RewriteEngine on'
 
 - name: Add trusted host patterns to Drupal settings
   ansible.builtin.blockinfile:
-    path: /var/www/html/web/sites/default/settings.php
+    path: "{{ drupal_web_root }}/sites/default/settings.php"
     marker: "# {mark} ANSIBLE MANAGED ALB CONFIG"
     block: |
       $settings['trusted_host_patterns'] = [
