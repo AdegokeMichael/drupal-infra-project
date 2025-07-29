@@ -19,7 +19,6 @@
 
 - name: Disable default Apache site
   command: a2dissite 000-default.conf
-  notify: restart apache
   ignore_errors: yes  # In case it's already disabled
 
 - name: Ensure Apache directories exist
