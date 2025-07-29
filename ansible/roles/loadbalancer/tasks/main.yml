@@ -55,7 +55,7 @@
 
 - name: Add trusted host patterns to Drupal settings
   ansible.builtin.blockinfile:
-    path: "{{ web_root }}/sites/default/settings.php"
+    path: "{{ web_root }}/drupal/web/sites/default/settings.php"
     marker: "# {mark} ANSIBLE MANAGED ALB CONFIG"
     block: |
       $settings['trusted_host_patterns'] = [
