@@ -1,15 +1,47 @@
-- name: Install Apache
+---
+- name: Install Apache and required components
   apt:
-    name: apache2
+    name:
+      - apache2
+      - libapache2-mod-php  # Required for PHP processing
     state: present
+    update_cache: yes
 
-- name: Enable mod_rewrite
+- name: Ensure critical Apache modules are enabled
   apache2_module:
-    name: rewrite
+    name: "{{ item }}"
     state: present
+  loop:
+    - rewrite       # For Drupal clean URLs
+    - headers       # For security headers
+    - expires       # For caching
+    - proxy_fcgi    # If using PHP-FPM
+
+- name: Disable default Apache site
+  command: a2dissite 000-default.conf
+  notify: restart apache
+  ignore_errors: yes  # In case it's already disabled
+
+- name: Ensure Apache directories exist
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  loop:
+    - /etc/apache2/ssl
+    - /etc/apache2/sites-available
+    - /etc/apache2/sites-enabled
 
 - name: Set Apache to start on boot
   systemd:
     name: apache2
     enabled: yes
+    state: started
 
+- name: Ensure Apache user matches PHP-FPM user
+  user:
+    name: www-data
+    groups: www-data
+    append: yes
