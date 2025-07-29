@@ -91,11 +91,9 @@
 
 - name: Quick start Drupal site (e.g. Umami demo)
   shell: >
-   php -d memory_limit=1024M core/scripts/drupal quick-start {{ drupal_site_name }}
+    timeout 1800 php -d memory_limit=1024M core/scripts/drupal quick-start {{ drupal_site_name }}
   args:
     chdir: "{{ drupal_project_dir }}/web"
-    timeout: 1800
-    poll: 10
     creates: "{{ drupal_project_dir }}/web/sites/default/settings.php"
   when: drupal_site_name | length > 0 and not drupal_installed
 
