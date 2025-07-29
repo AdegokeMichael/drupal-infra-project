@@ -34,6 +34,22 @@ jobs:
           docker build -f docker/Dockerfile -t $ECR_REPOSITORY:latest .
           docker tag $ECR_REPOSITORY:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
 
+      
+      - name: Smoke Test (Staging)
+        run: |
+         
+          aws eks update-kubeconfig --name ${{ env.EKS_CLUSTER }} --region ${{ env.AWS_REGION }}
+    
+          STAGING_URL=$(kubectl get svc drupal-service -n ${{ env.STAGING_NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+          echo "Testing URL: http://$STAGING_URL"
+    
+          # Add delay for ALB to initialize (critical!)
+          sleep 30
+    
+          # Run smoke test
+          curl -sSf http://$STAGING_URL | grep "Drupal" || (echo "❌ Smoke test failed"; exit 1)
+          echo "✅ Smoke test passed"
+      
       - name: Smoke Test (Staging)
         run: |
            # Get the staging service URL
