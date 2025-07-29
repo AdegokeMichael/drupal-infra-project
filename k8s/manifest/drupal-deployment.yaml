@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: drupal
-        image: your-dockerhub-username/drupal:latest
+        image: <your-account-id>.dkr.ecr.<your-region>.amazonaws.com/drupal:latest  # or Docker Hub image
         ports:
         - containerPort: 80
         env:
