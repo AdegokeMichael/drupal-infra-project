@@ -23,8 +23,8 @@ spec:
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: drupal-db-secret
-              key: password
+              name: drupal-secret
+              key: db-password
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
