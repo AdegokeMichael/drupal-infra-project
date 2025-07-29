@@ -96,6 +96,30 @@
     chdir: "{{ drupal_project_dir }}/web"
     creates: "{{ drupal_project_dir }}/web/sites/default/settings.php"
   when: drupal_site_name | length > 0 and not drupal_installed
+- name: Deploy Apache configuration
+  template:
+    src: drupal.conf.j2
+    dest: /etc/apache2/sites-available/drupal.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify:
+    - enable_drupal_site
+    - restart apache
+
+- name: Disable default Apache site
+  command: a2dissite 000-default.conf
+  notify: restart apache
+  when: "'apache2' in ansible_facts.packages"
+
+- name: Ensure mod_rewrite is enabled
+  command: a2enmod rewrite
+  notify: restart apache
+
+- name: Ensure mod_proxy_fcgi is enabled (for PHP-FPM)
+  command: a2enmod proxy_fcgi
+  notify: restart apache
+  when: php_fpm_install | default(true)  
 
 - import_tasks: db_config.yml
   when: drupal_installed
