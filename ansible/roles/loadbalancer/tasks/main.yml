@@ -9,7 +9,7 @@
     path: "{{ web_root }}"
   register: web_dir
   vars:
-    web_root: "{{ drupal_project_dir }}/drupal"
+    web_root: "{{ /var/www/html }}"
 
 - name: Create Drupal web directory if missing
   ansible.builtin.file:
