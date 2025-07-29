@@ -17,6 +17,8 @@ spec:
       - name: drupal
         image: 663904406024.dkr.ecr.us-east-1.amazonaws.com/drupal:latest  # Will be replaced by GitHub Actions
         imagePullPolicy: Always
+        imagePullSecrets:
+          -name: ecr-creds
         ports:
         - containerPort: 80
         env:
