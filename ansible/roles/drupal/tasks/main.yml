@@ -175,7 +175,6 @@
 
 - name: Ensure mod_rewrite is enabled
   command: a2enmod rewrite
-  notify: restart apache
 
 - name: Ensure mod_proxy_fcgi is enabled (for PHP-FPM)
   command: a2enmod proxy_fcgi
