@@ -158,9 +158,20 @@
     - restart apache
 
 - name: Disable default Apache site
-  command: a2dissite 000-default.conf
-  notify: restart apache
-  when: "'apache2' in ansible_facts.packages"
+  block:
+    - name: Check if default site exists
+      stat:
+        path: /etc/apache2/sites-enabled/000-default.conf
+      register: default_site
+
+    - name: Disable default site if exists
+      command: a2dissite 000-default.conf
+      notify: restart apache
+      when: default_site.stat.exists
+  rescue:
+    - name: Continue if disable fails
+      debug:
+        msg: "Default site already disabled or not present"
 
 - name: Ensure mod_rewrite is enabled
   command: a2enmod rewrite
