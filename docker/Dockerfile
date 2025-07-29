@@ -15,8 +15,6 @@ RUN apt-get update && apt-get install -y \
     && composer global require phpunit/phpunit \
     && ln -s /root/.composer/vendor/bin/phpunit /usr/local/bin/phpunit
 
-# Alternatively, if your project has a composer.json with PHPUnit as a dev dependency:
-COPY composer.json composer.lock /var/www/html/
 RUN composer install --no-dev  # For production
 # For testing (install dev dependencies, including PHPUnit):
 RUN composer install --dev
