@@ -15,7 +15,8 @@ spec:
     spec:
       containers:
       - name: drupal
-        image: $ECR_IMAGE_PLACEHOLDER  # Will be replaced by GitHub Actions
+        image: 663904406024.dkr.ecr.us-east-1.amazonaws.com/drupal:latest  # Will be replaced by GitHub Actions
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         env:
