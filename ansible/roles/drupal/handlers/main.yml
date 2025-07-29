@@ -3,3 +3,7 @@
     name: apache2
     state: reloaded
 
+- name: enable_drupal_site
+  command: a2ensite drupal.conf
+  notify: restart apache    
+
