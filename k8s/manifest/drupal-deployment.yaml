@@ -28,8 +28,8 @@ spec:
         - name: DRUPAL_DATABASE_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: drupal-db-secret
-              key: password
+              name: drupal-secret
+              key: DRUPAL_DATABASE_PASSWORD
         volumeMounts:
         - name: drupal-data
           mountPath: /var/www/html/sites
