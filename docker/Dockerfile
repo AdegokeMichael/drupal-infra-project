@@ -2,11 +2,24 @@
 FROM drupal:10-apache
 
 # Install dependencies
+FROM drupal:10-apache
+
+# Install dependencies and PHPUnit
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+    && php composer-setup.php --install-dir=/usr/local/bin --filename=composer \
+    && php -r "unlink('composer-setup.php');" \
+    && composer global require phpunit/phpunit \
+    && ln -s /root/.composer/vendor/bin/phpunit /usr/local/bin/phpunit
 
+# Alternatively, if your project has a composer.json with PHPUnit as a dev dependency:
+COPY composer.json composer.lock /var/www/html/
+RUN composer install --no-dev  # For production
+# For testing (install dev dependencies, including PHPUnit):
+RUN composer install --dev
 # Install Drush (Drupal shell)
 RUN php -r "readfile('https://sites.drupal.org/files/drush.phar');" > drush \
     && chmod +x drush \
