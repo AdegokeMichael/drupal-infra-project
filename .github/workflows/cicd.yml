@@ -34,9 +34,19 @@ jobs:
           docker build -f docker/Dockerfile -t $ECR_REPOSITORY:latest .
           docker tag $ECR_REPOSITORY:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
 
-      - name: Run unit tests
+      - name: Smoke Test (Staging)
         run: |
-          docker run $ECR_REPOSITORY:latest ./vendor/bin/phpunit
+           # Get the staging service URL
+           STAGING_URL=$(kubectl get svc drupal-service -n ${{ env.STAGING_NAMESPACE }} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+    
+           # Verify HTTP 200 and "Drupal" in response
+           echo "Testing Staging URL: http://$STAGING_URL"
+           curl -sSf http://$STAGING_URL | grep "Drupal" || (echo "❌ Smoke test failed: Drupal not found"; exit 1)
+    
+           # Optional: Quick Drush status check
+           kubectl exec -n ${{ env.STAGING_NAMESPACE }} deploy/drupal -- drush status --fields=bootstrap | grep -q "Successful" || (echo "❌ Drupal bootstrap failed"; exit 1)
+    
+           echo "✅ Staging smoke test passed"
 
       - name: Push to ECR
         run: |
