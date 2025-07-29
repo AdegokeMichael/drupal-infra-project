@@ -1,5 +1,12 @@
----
+
 - name: Restart Apache
-  ansible.builtin.service:
+  service:
     name: apache2
     state: restarted
+    enabled: yes
+
+- name: Disable default Apache site
+  command: a2dissite 000-default.conf
+  notify: restart apache
+  ignore_errors: yes  # In case it's already disabled
+  changed_when: false  # a2dissite doesn't return proper exit codes    
