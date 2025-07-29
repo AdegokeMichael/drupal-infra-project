@@ -1,0 +1,70 @@
+name: Drupal CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: drupal
+  EKS_CLUSTER: drupal-cluster
+  STAGING_NAMESPACE: drupal-staging
+  PROD_NAMESPACE: drupal-prod
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker image
+        run: |
+          docker build -f docker/Dockerfile -t $ECR_REPOSITORY:latest .
+          docker tag $ECR_REPOSITORY:latest ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+
+      - name: Run unit tests
+        run: |
+          docker run $ECR_REPOSITORY:latest ./vendor/bin/phpunit
+
+      - name: Push to ECR
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
+
+  deploy-staging:
+    needs: build-test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy to staging
+        run: |
+          kubectl create namespace ${{ env.STAGING_NAMESPACE }} || true
+          kubectl apply -f staging/ -n ${{ env.STAGING_NAMESPACE }}
+          kubectl set image deployment/drupal drupal=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }} -n ${{ env.STAGING_NAMESPACE }}
+
+  deploy-prod:
+    needs: deploy-staging
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for manual approval
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ github.token }}
+          approvers: your-github-username  # Replace with your username
+
+      - name: Deploy to production
+        run: |
+          kubectl create namespace ${{ env.PROD_NAMESPACE }} || true
+          kubectl apply -f prod/ -n ${{ env.PROD_NAMESPACE }}
+          kubectl set image deployment/drupal drupal=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ github.sha }} -n ${{ env.PROD_NAMESPACE }}
