@@ -1,7 +1,8 @@
-- name: Reload Apache
+- name: Restart Apache
   service:
     name: apache2
-    state: reloaded
+    state: restarted
+    enabled: yes
 
 - name: enable_drupal_site
   command: a2ensite drupal.conf
