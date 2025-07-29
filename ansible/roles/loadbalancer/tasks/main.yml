@@ -4,12 +4,40 @@
   notify: Restart Apache
   when: ansible_os_family == "Debian"
 
-- name: Add reverse proxy config to Drupal .htaccess
-  ansible.builtin.lineinfile:
-    path: /var/www/html/web/.htaccess
-    insertafter: 'RewriteEngine on'
-    line: '  SetEnvIf X-Forwarded-Proto https HTTPS=on'
-    state: present
+- name: Ensure .htaccess exists before modification
+  block:
+    - name: Check if .htaccess exists
+      stat:
+        path: /var/www/html/web/.htaccess
+      register: htaccess_file
+
+    - name: Create basic .htaccess if missing
+      copy:
+        content: |
+          <IfModule mod_rewrite.c>
+            RewriteEngine on
+            RewriteBase /
+            RewriteCond %{REQUEST_FILENAME} !-f
+            RewriteCond %{REQUEST_FILENAME} !-d
+            RewriteRule ^(.*)$ index.php?q=$1 [L,QSA]
+          </IfModule>
+        dest: /var/www/html/web/.htaccess
+        owner: www-data
+        group: www-data
+        mode: '0644'
+      when: not htaccess_file.stat.exists
+
+  # Always runs after the block
+  always:
+    - name: Add reverse proxy settings
+      ansible.builtin.blockinfile:
+        path: /var/www/html/web/.htaccess
+        marker: "# {mark} ANSIBLE MANAGED LB CONFIG"
+        block: |
+          SetEnvIf X-Forwarded-Proto https HTTPS=on
+          RewriteCond %{HTTP:X-Forwarded-Proto} !https
+          RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+        insertafter: 'RewriteEngine on'
 
 - name: Add trusted host patterns to Drupal settings
   ansible.builtin.blockinfile:
