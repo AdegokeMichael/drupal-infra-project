@@ -17,9 +17,4 @@
     - harden
     - loadbalancer
     
-- name: Deploy Drupal with Ansible
-  hosts: app
-  become: true
 
-  roles:
-    - role: drupal
