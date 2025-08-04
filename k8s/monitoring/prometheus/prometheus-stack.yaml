@@ -5,24 +5,16 @@ metadata:
   namespace: monitoring
 spec:
   serviceAccountName: prometheus
-  serviceMonitorSelector: {}
-  podMonitorSelector: {}
-  alerting:
-    alertmanagers:
-    - namespace: monitoring
-      name: alertmanager
-      port: web
+  serviceMonitorNamespaceSelector: {}  # Watch all namespaces
+  serviceMonitorSelector: {}          # Select all ServiceMonitors
   resources:
     requests:
       memory: 4Gi
       cpu: 1
-    limits:
-      memory: 8Gi
-      cpu: 2
   storage:
     volumeClaimTemplate:
       spec:
         storageClassName: gp2
         resources:
           requests:
-            storage: 50Gi
+            storage: 20Gi

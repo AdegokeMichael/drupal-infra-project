@@ -1,33 +1,31 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grafana-dashboard-drupal
+  name: grafana-dashboards
   namespace: monitoring
   labels:
-    grafana_dashboard: "1"
+    grafana_dashboard: "1"  # Critical for auto-discovery
 data:
-  drupal-dashboard.json: |-
+  drupal-php-fpm.json: |-
     {
-      "title": "Drupal Monitoring",
+      "title": "Drupal PHP-FPM",
       "panels": [
         {
-          "title": "PHP-FPM Workers",
+          "title": "Active Processes",
           "type": "graph",
-          "targets": [
-            {
-              "expr": "phpfpm_processes_total{state='active'}",
-              "legendFormat": "Active Workers"
-            }
-          ]
-        }
-      ],
-      "__inputs": [],
-      "__requires": [
+          "gridPos": {"x":0,"y":0,"w":12,"h":8},
+          "targets": [{
+            "expr": "phpfpm_processes_total{state='active'}",
+            "legendFormat": "{{pod}}"
+          }]
+        },
         {
-          "type": "grafana",
-          "id": "grafana",
-          "name": "Grafana",
-          "version": "8.0.0"
+          "title": "Request Latency",
+          "type": "stat",
+          "gridPos": {"x":12,"y":0,"w":6,"h":4},
+          "targets": [{
+            "expr": "rate(phpfpm_requests_duration_seconds_sum[1m])"
+          }]
         }
       ]
     }
