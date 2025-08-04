@@ -3,11 +3,18 @@ kind: Service
 metadata:
   name: drupal-service
   namespace: drupal
+  labels:                   # Add these
+    app: drupal             # Needed for ServiceMonitor
 spec:
   selector:
     app: drupal
   ports:
-    - protocol: TCP
+    - name: http            # Named port
+      protocol: TCP
       port: 80
       targetPort: 80
-  type: LoadBalancer  # Creates an AWS ALB
+    - name: php-fpm-metrics # Must match ServiceMonitor
+      protocol: TCP
+      port: 9253
+      targetPort: 9253
+  type: LoadBalancer

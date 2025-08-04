@@ -12,10 +12,14 @@ spec:
     metadata:
       labels:
         app: drupal
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9253"
     spec:
       containers:
+      # Main Drupal container
       - name: drupal
-        image: 663904406024.dkr.ecr.us-east-1.amazonaws.com/drupal:latest  # or Docker Hub image
+        image: 663904406024.dkr.ecr.us-east-1.amazonaws.com/drupal:latest
         ports:
         - containerPort: 80
         env:
@@ -33,6 +37,43 @@ spec:
         volumeMounts:
         - name: drupal-data
           mountPath: /var/www/html/sites
+        # Add liveness/readiness probes (recommended)
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 30
+          periodSeconds: 5
+
+      # php-fpm-exporter sidecar
+      - name: php-fpm-exporter
+        image: hipages/php-fpm_exporter:latest
+        ports:
+        - containerPort: 9253
+        args:
+          - --phpfpm.scrape-uri=tcp://localhost:9000/status
+          - --phpfpm.fix-process-count
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 50m
+            memory: 64Mi
+        # Add liveness probe for sidecar (recommended)
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 9253
+          initialDelaySeconds: 30
+          periodSeconds: 10
+
       volumes:
       - name: drupal-data
         persistentVolumeClaim:
